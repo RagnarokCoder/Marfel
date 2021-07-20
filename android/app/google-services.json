@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "131700411999",
+    "project_id": "paleteriamarfel-3a512",
+    "storage_bucket": "paleteriamarfel-3a512.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131700411999:android:98d56aded26123cab915ea",
+        "android_client_info": {
+          "package_name": "com.example.paleteria_marfel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131700411999-0fd4br88a1revhejiogakp5qr4df3lgh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpEnNH0_Kh9vjTYVsDy7J3BIZVkWU4Cro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131700411999-0fd4br88a1revhejiogakp5qr4df3lgh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
