@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:icon_badge/icon_badge.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
+import 'package:paleteria_marfel/Producci%C3%B3n/VistaProduccion.dart';
 import 'package:paleteria_marfel/Ventas/NuevaVenta.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:paleteria_marfel/Ventas/productos_ventas.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 class VistaVentas extends StatefulWidget {
@@ -48,14 +51,13 @@ class _VistaVentasState extends State<VistaVentas> {
 
     print(json.decode(response.body)['data']['moldes']);
 
-    return json.decode(response.body);
+    return json.decode(response.body)['data']['moldes'];
   }
 
   @override
   void initState() {
     getInventario().then((body) {
-      inventario = filteredInventario = body;
-
+      inventario = body;
       setState(() {});
     });
 
@@ -64,70 +66,104 @@ class _VistaVentasState extends State<VistaVentas> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: colorPrincipal,
-        elevation: 0,
-        title: Text("Ventas"),
-        centerTitle: true,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      drawer: CustomAppbar(),
-      body: ListView(
-        children: [
-          _tableCards(),
-        ],
-      ),
-    );
+        appBar: AppBar(
+            backgroundColor: colorPrincipal,
+            elevation: 0,
+            title: Text("Ventas"),
+            centerTitle: true,
+            actions: [
+              Stack(
+                children: <Widget>[
+                  IconBadge(
+                    icon: Icon(
+                      Icons.shopping_cart,
+                      size: width * .07,
+                      color: Colors.white,
+                    ),
+                    itemCount: 3,
+                    badgeColor: Colors.red,
+                    itemColor: colorPrincipal,
+                    hideZero: true,
+                    onTap: () {
+                      print(carrito);
+                      totalfinal = 0;
+                      showModalBottomSheet(
+                          builder: (BuildContext context) {
+                            return Container(
+                              width: width,
+                              height: height * 5 / 6,
+                            );
+                          },
+                          context: context);
+                    },
+                  ),
+                ],
+              ),
+            ]),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        drawer: CustomAppbar(),
+        body: _tableCards());
   }
 
   Widget _tableCards() {
-    List<TableRow> rows = [];
-    for (int i = 0; i < inventario.length; i += 2) {
-      if ((i + 1) < inventario.length) {
-        rows.add(TableRow(children: [
-          CardMolde(molde: inventario[i]),
-          CardMolde(molde: inventario[i + 1]),
-        ]));
-      } else {
-        rows.add(TableRow(children: [
-          CardMolde(molde: inventario[i]),
-          Container(),
-        ]));
-      }
-    }
-    return Table(children: rows);
-  }
-}
+    return ListView(children: [
+      //CardMolde(title: inventario[0]['nombre'], img: inventario[0]['img']),
 
-class CardMolde extends StatelessWidget {
-  final Map<String, dynamic> molde;
-
-  const CardMolde({Key key, @required this.molde}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-
-    return Container(
-      decoration: BoxDecoration(
-          color: colorPrincipal, borderRadius: BorderRadius.circular(20)),
-      width: width * .4,
-      height: width * .4,
-      margin: EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-              width: width * .25, child: Image(image: NetworkImage(_getUrl()))),
-          Text(molde['nombre'].toString()),
-        ],
+      CurvedListItem(
+        title: 'Helado',
+        time: '',
+        asset: "assets/heladoPor.png",
+        color: colorPrincipal,
+        nextColor: Colors.white,
+        press: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SalesProducts(
+                    categoria: "Helado",
+                  )));
+        },
       ),
-    );
-  }
-
-  String _getUrl() {
-    if (molde['img'] != '') return molde['img'];
-    return 'https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640';
+      CurvedListItemWhite(
+        title: 'Bolis',
+        time: '',
+        asset: "assets/boliPor.jpg",
+        color: Colors.white,
+        nextColor: colorPrincipal,
+        press: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SalesProducts(
+                    categoria: "Bolis",
+                  )));
+        },
+      ),
+      CurvedListItem(
+        title: 'Sandwich',
+        time: '',
+        asset: "assets/sandPor.jpg",
+        color: colorPrincipal,
+        nextColor: Colors.white,
+        press: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SalesProducts(
+                    categoria: "Sandwich",
+                  )));
+        },
+      ),
+      CurvedListItemWhite(
+        title: 'Troles',
+        time: '',
+        asset: "assets/trolPor.jpg",
+        color: Colors.white,
+        nextColor: colorPrincipal,
+        press: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SalesProducts(
+                    categoria: "Troles",
+                  )));
+        },
+      ),
+    ]);
   }
 }
