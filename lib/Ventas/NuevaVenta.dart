@@ -304,35 +304,36 @@ class _NuevaVentaState extends State<NuevaVenta> {
                         fontSize: 27,
                         fontWeight: FontWeight.w800,
                         color: colorPrincipal)),
-                        Spacer(),Spacer(),Spacer(),Spacer(),Spacer(),Spacer(),Spacer(),
-               
+                Spacer(),
+                Spacer(),
+                Spacer(),
+                Spacer(),
+                Spacer(),
+                Spacer(),
+                Spacer(),
               ],
             ),
             SizedBox(
               height: 10,
             ),
             Container(
-            padding: EdgeInsets.only(right: 170),
-            child:Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              
-              children: [
-                
-              Text("Desplazado a 3 meses ",
+                padding: EdgeInsets.only(right: 170),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Desplazado a 3 meses ",
                         style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
                             color: Colors.grey[600])),
-                            
-                          Text("2% de interes",
+                    Text("2% de interes",
                         style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
                             color: Colors.grey[600])),
-                         
-                               ],)
-           
-          )]),
+                  ],
+                ))
+          ]),
         ));
   }
 }
