@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 
 
 class GraficaGastos extends StatefulWidget {
+  final String usuario;
+  GraficaGastos({Key key, this.usuario}) : super(key: key);
   @override
   _GraficaGastosState createState() => _GraficaGastosState();
 
@@ -69,7 +71,7 @@ class _GraficaGastosState extends State<GraficaGastos> {
         }),
         centerTitle: true,
       ),
-      drawer: CustomAppbar(),
+      drawer: CustomAppBar(usuario: widget.usuario,),
 
       body: ListView(
         children:<Widget>[

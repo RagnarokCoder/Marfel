@@ -12,7 +12,8 @@ import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 
 class VistaPersonal extends StatefulWidget {
-  VistaPersonal({Key key}) : super(key: key);
+  final String usuario;
+  VistaPersonal({Key key, this.usuario}) : super(key: key);
 
   @override
   _VistaPersonalState createState() => _VistaPersonalState();
@@ -76,7 +77,7 @@ class _VistaPersonalState extends State<VistaPersonal> {
          centerTitle: true,
          
        ),
-       drawer: CustomAppbar(),
+       drawer: CustomAppBar(usuario: widget.usuario,),
        body: ListView(
          children: [
            Container(
@@ -95,7 +96,9 @@ class _VistaPersonalState extends State<VistaPersonal> {
   side: BorderSide(color: Colors.transparent)
 ),
                    onPressed: (){
-                     Navigator.push(context, PageTransition(type: PageTransitionType.topToBottom, child: Amonestar()));
+                     Navigator.push(context, PageTransition(type: PageTransitionType.topToBottom, child: Amonestar(
+                       usuario: widget.usuario,
+                     )));
                    },
                    label: Text("Amonestar", 
                    style: TextStyle(color: Colors.white),

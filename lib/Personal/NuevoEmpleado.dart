@@ -1,10 +1,12 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:paleteria_marfel/FirebaseAuth/Authentication_Service.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 import '../HexaColors/HexColor.dart';
-
+import 'package:provider/provider.dart';
 
 
 class NuevoEmpleado extends StatefulWidget {
@@ -14,6 +16,9 @@ class NuevoEmpleado extends StatefulWidget {
   _NuevoEmpleadoState createState() => _NuevoEmpleadoState();
 }
 
+int drop;
+String extensionEmail="";
+String finalEmail="...";
 final _nombreController = TextEditingController();
 final _apellidoController = TextEditingController();
 final _puestoController = TextEditingController();
@@ -50,107 +55,92 @@ class _NuevoEmpleadoState extends State<NuevoEmpleado> {
                _buildTextField(Icons.person_add_alt_1_sharp, "Nombre", _nombreController),
            _buildTextField(Icons.person_add_alt_1_sharp, "Apellido", _apellidoController),
            Container(
-             height: MediaQuery.of(context).size.height*0.12,
-             width: MediaQuery.of(context).size.width,
-             
-             child: Column(
-               mainAxisAlignment: MainAxisAlignment.start,
-               children: [
-                 Text("Puesto",
-                 style: TextStyle(
-                   color: colorPrincipal,
-                   fontSize: 15,
-                   fontWeight: FontWeight.bold
-                 ),
-                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    InkWell(
-                      child: Container(
-                        
-                        height: MediaQuery.of(context).size.height*0.085,
-                        width: MediaQuery.of(context).size.height*0.06,
-                        child: Column(
-                          children: [
-                            Image.asset("assets/work.png"),
-                            puesto == 0? 
-                            Text("Compras",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold
-                            ),
-                            ):SizedBox()
-                          ],
-                        )
-                      ),
-                      onTap: (){
-                        setState(() {
-                          puesto = 0;
-                          puestoSelect = "Compras";
-                        });
-                      },
-                    ),
-                    InkWell(
-                      child: Container(
-                        
-                        height: MediaQuery.of(context).size.height*0.085,
-                        width: MediaQuery.of(context).size.height*0.06,
-                        child: Column(
-                          children: [
-                            Image.asset("assets/work.png"),
-                            puesto == 1? 
-                            Text("Ventas",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold
-                            ),
-                            ):SizedBox()
-                          ],
-                        )
-                      ),
-                      onTap: (){
-                        setState(() {
-                          puesto = 1;
-                          puestoSelect = "Ventas";
-                        });
-                      },
-                    ),
-                    InkWell(
-                      child: Container(
-                        
-                        height: MediaQuery.of(context).size.height*0.088,
-                        width: MediaQuery.of(context).size.height*0.06,
-                        child: Column(
-                          children: [
-                            Image.asset("assets/work.png"),
-                            puesto == 2? 
-                            Text("Produc.",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold
-                            ),
-                            ):SizedBox()
-                          ],
-                        )
-                      ),
-                      onTap: (){
-                        setState(() {
-                          puestoSelect = "Produccion";
-                          puesto = 2;
-                        });
-                      },
-                    ),
-                  ],
-                )
-               ],
-             ),
-           ),
+                height: MediaQuery.of(context).size.height*0.08,
+                child: 
+                  
+                  CustomDropdown(
+                  
+        valueIndex: drop,
+        enabledColor: colorPrincipal,
+        disabledIconColor: Colors.white,
+        enabledIconColor: Colors.white,
+        enableTextColor: Colors.white,
+        elementTextColor: Colors.white,
+        openColor: colorPrincipal,
+        
+        hint: "Tipo de Usuario: ",
+        items: [
+          CustomDropdownItem(text: "Administrador"),
+          CustomDropdownItem(text: "Inventario"),
+          CustomDropdownItem(text: "Compras"),
+          CustomDropdownItem(text: "Ventas"),
+          CustomDropdownItem(text: "Producciòn"),
+          
+        ],
+        onChanged: (newValue) {
+          setState(() => drop = newValue);
+          print(drop);
+          switch(drop){
+                            case 0:
+                            extensionEmail="_admin@marfel.com";
+                            break;
+                            case 1:
+                            extensionEmail="_inventario@marfel.com";
+                            break;
+                            case 2:
+                            extensionEmail="_compras@marfel.com";
+                            break;
+                            case 3:
+                            extensionEmail="_ventas@marfel.com";
+                            break;
+                            case 4:
+                            extensionEmail="_produccion@marfel.com";
+                            break;
+                            
+                          }
+        },
+      )
+                
+              
+              ),
            _buildTextField(Icons.phone, "Telefono", _telfonoController),
-           _buildTextField(Icons.email, "Correo", _emailController),
+           Text("$finalEmail",
+              style: TextStyle(
+                color: Colors.black
+              ),
+              ),
+           Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+          color: Colors.white, border: Border.all(color: colorPrincipal)),
+      child: TextField(
+        controller: _emailController,
+        onChanged: (valor) {
+                  if(valor=="")
+                  {
+                    finalEmail="";
+                  }
+                  else
+                  {
+                    finalEmail = _emailController.text+extensionEmail.trim();
+                  }
+                  
+                  setState(() {});
+                },
+        style: TextStyle(color: Colors.black),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+          labelText: "Correo",
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          labelStyle: TextStyle(color: colorPrincipal),
+          icon: Icon(Icons.email, color: colorPrincipal),
+        ),
+      ),
+    ),
            _buildTextField(Icons.lock, "Contraseña", _passwordController),
              ],
            ),
@@ -170,11 +160,44 @@ class _NuevoEmpleadoState extends State<NuevoEmpleado> {
                        buildAlert(context);
                      }
                      else{
-                      
+                      switch(drop){
+                            case 0:
+                            extensionEmail="_admin@marfel.com";
+                            puestoSelect = "Admin";
+                            break;
+                            case 1:
+                            extensionEmail="_inventario@marfel.com";
+                            puestoSelect = "Inventario";
+                            break;
+                            case 2:
+                            extensionEmail="_compras@marfel.com";
+                            puestoSelect = "Compras";
+                            break;
+                            case 3:
+                            extensionEmail="_ventas@marfel.com";
+                            puestoSelect = "Ventas";
+                            break;
+                            case 4:
+                            extensionEmail="_produccion@marfel.com";
+                            puestoSelect = "Produccion";
+                            break;
+                            
+                          }
+                          finalEmail = _emailController.text+extensionEmail.trim();
+                          context.read<AuthenticationService>().signUp(
+                            email: finalEmail,
+                            password: _passwordController.text.trim(),
+                          ).then((value) => {
+                            _passwordController.text="",
+                            _emailController.text="",
+                            drop=0,
+                            finalEmail="",
+                            setState(() {}),
+                            });
                        FirebaseFirestore.instance.collection("Empleados").doc(_nombreController.text+" "+_apellidoController.text).set({
                        "Nombre": _nombreController.text,
                        "Apellido": _apellidoController.text,
-                       "Correo": _emailController.text,
+                       "Correo": finalEmail,
                        "Contraseña": _passwordController.text,
                        "Telefono": _telfonoController.text,
                        "Puesto": puestoSelect

@@ -2,14 +2,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:paleteria_marfel/Inventario/DetallesInventario.dart';
 import 'package:paleteria_marfel/Producci%C3%B3n/VistaProduccion.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
+import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 
 class VistaInventario extends StatefulWidget {
-  VistaInventario({Key key}) : super(key: key);
+  final String usuario;
+  VistaInventario({Key key, this.usuario}) : super(key: key);
 
   @override
   _VistaInventarioState createState() => _VistaInventarioState();
@@ -48,7 +49,7 @@ class _VistaInventarioState extends State<VistaInventario> {
         ),
         
       ),
-      drawer: CustomAppbar(),
+      drawer: CustomAppBar(usuario: widget.usuario,),
       body: ListView(
         children: [
           Container(

@@ -7,6 +7,8 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 class VistaGraficas extends StatefulWidget {
+  final String usuario;
+  VistaGraficas({Key key, this.usuario}) : super(key: key);
   @override
   _VistaGraficasState createState() => _VistaGraficasState();
 }
@@ -102,7 +104,7 @@ class _VistaGraficasState extends State<VistaGraficas> {
             ],
         
       ),
-      drawer: CustomAppbar(),
+      drawer: CustomAppBar(usuario: widget.usuario,),
       body: ListView(
         children: [
           Container(

@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 
 
 class VistaCompraLista extends StatefulWidget {
+  final String usuario;
+  VistaCompraLista({Key key, this.usuario}) : super(key: key);
   @override
   _VistaCompraListaState createState() => _VistaCompraListaState();
 
@@ -67,7 +69,7 @@ bool isSearching = false;
   Size size = MediaQuery.of(context).size;
    
     return Scaffold(
-       drawer: CustomAppbar(),
+       drawer: CustomAppBar(usuario: widget.usuario,),
       appBar: AppBar(
         
       

@@ -34,7 +34,7 @@ dependencies:
   percent_indicator:
   charts_flutter:
   syncfusion_flutter_charts:
-  intl:
+  intl: ^0.16.1
   flutter_sparkline: 
   flutter_staggered_grid_view: 
   font_awesome_flutter: 
@@ -45,6 +45,7 @@ dependencies:
   provider:
   slide_to_confirm:
   icon_badge:
+  firebase_auth: ^0.20.1
 
 
   # The following adds the Cupertino Icons font to your application.

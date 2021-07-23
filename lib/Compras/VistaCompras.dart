@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 
 
 class VistaCompra extends StatefulWidget {
+  final String usuario;
+  VistaCompra({Key key, this.usuario}) : super(key: key);
   @override
   _VistaCompraState createState() => _VistaCompraState();
 
@@ -64,7 +66,7 @@ class _VistaCompraState extends State<VistaCompra> {
         title: Text("Más Comprado"),
         centerTitle: true,
       ),
-      drawer: CustomAppbar(),
+      drawer: CustomAppBar(usuario: widget.usuario,),
 
       body: ListView(
         children:<Widget>[

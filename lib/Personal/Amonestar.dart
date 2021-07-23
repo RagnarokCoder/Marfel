@@ -8,7 +8,8 @@ import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 
 
 class Amonestar extends StatefulWidget {
-  Amonestar({Key key}) : super(key: key);
+  final String usuario;
+  Amonestar({Key key, this.usuario}) : super(key: key);
 
   @override
   _AmonestarState createState() => _AmonestarState();
@@ -184,7 +185,7 @@ class _AmonestarState extends State<Amonestar> {
              child: Row(
                mainAxisAlignment: MainAxisAlignment.center,
                children: [
-                 Text("Amonestación Hecha Por: $user",
+                 Text("Amonestación Hecha Por: ${widget.usuario}",
            style: TextStyle(
              color: Colors.grey.shade700,
              fontWeight: FontWeight.bold,
@@ -211,7 +212,7 @@ class _AmonestarState extends State<Amonestar> {
                      
                      
                 
-                     FirebaseFirestore.instance.collection("Personal").add({"Nombre": "$selectedCurrency1", "Motivo": _motivoController.text, "TipoAmonestacion": _checkboxValue1, "HechaPor": "Jose Manuel"}).
+                     FirebaseFirestore.instance.collection("Personal").add({"Nombre": "$selectedCurrency1", "Motivo": _motivoController.text, "TipoAmonestacion": _checkboxValue1, "HechaPor": widget.usuario}).
                      then((value) => {
                        _motivoController.text = "",
                        _checkboxValue1 = 0

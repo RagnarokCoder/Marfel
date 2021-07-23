@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 class VistaVentas extends StatefulWidget {
+  final String usuario;
+  VistaVentas({Key key, this.usuario}) : super(key: key);
   @override
   _VistaVentasState createState() => _VistaVentasState();
 }
@@ -466,7 +468,7 @@ class _VistaVentasState extends State<VistaVentas> {
             splashColor: Colors.grey,
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      drawer: CustomAppbar(),
+      drawer: CustomAppBar(usuario: widget.usuario,),
       body: ListView(
         children: [
           Container(

@@ -9,7 +9,8 @@ import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 class VistaClientes extends StatefulWidget {
-  VistaClientes({Key key}) : super(key: key);
+  final String usuario;
+  VistaClientes({Key key, this.usuario}) : super(key: key);
 
   @override
   _VistaClientesState createState() => _VistaClientesState();
@@ -75,7 +76,7 @@ List filteredClientes = [];
          centerTitle: true,
          
        ),
-       drawer: CustomAppbar(),
+       drawer: CustomAppBar(usuario: widget.usuario,),
        body: ListView(
          children: [
            Container(

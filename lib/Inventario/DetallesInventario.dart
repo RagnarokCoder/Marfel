@@ -95,7 +95,8 @@ class _DetallesInventarioState extends State<DetallesInventario> {
           Container(
             height: MediaQuery.of(context).size.height*0.8,
             child: StreamBuilder<QuerySnapshot>(
-         stream: FirebaseFirestore.instance.collection("Inventario").where("Categoria", isEqualTo: widget.categoria).snapshots(),
+         stream: FirebaseFirestore.instance.collection("Inventario")
+         .where("Categoria", isEqualTo: widget.categoria).snapshots(),
             builder: (context, snapshot) {
                   
               if(!snapshot.hasData){

@@ -27,7 +27,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
          centerTitle: true,
          
        ),
-       drawer: CustomAppbar(),
+       drawer:  CustomAppBar(usuario: widget.usuario,),
       backgroundColor: colorPrincipal,
       body: Center(
         child: Container(

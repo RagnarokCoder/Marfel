@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,9 @@ import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 class VistaGastos extends StatefulWidget {
+
+  final String usuario;
+  VistaGastos({Key key, this.usuario}) : super(key: key);
   @override
   _VistaGastosState createState() => _VistaGastosState();
 }
@@ -20,7 +24,9 @@ final _nombreController = TextEditingController();
 final _cantidadController = TextEditingController();
 int diaSel, mesSel, yearSel;
 dynamic total = 0;
- 
+int drop1;
+String tipoGasto="";
+String selectGasto="";
 
 class _VistaGastosState extends State<VistaGastos> {
 
@@ -45,7 +51,7 @@ class _VistaGastosState extends State<VistaGastos> {
          centerTitle: true,
          
        ),
-        drawer: CustomAppbar(),
+        drawer: CustomAppBar(usuario: widget.usuario,),
        body: ListView(
          children: [
            Container(
@@ -170,6 +176,7 @@ class _VistaGastosState extends State<VistaGastos> {
             stream: FirebaseFirestore.instance.collection('Gastos').where("Dia", isEqualTo: diaSel)
             .where("Mes", isEqualTo: mesSel)
             .where("Año", isEqualTo: yearSel)
+            .where("TipoGasto", isEqualTo: selectGasto)
             .snapshots(),
             builder: (context, snapshot) {
               return Column(children: snapshot.data.docs.map<Widget>((doc) => _buildListItem(doc)).toList());
@@ -213,7 +220,7 @@ class _VistaGastosState extends State<VistaGastos> {
                 
                 icono = false;
                 setState(() {
-                  
+                  selectGasto = "Ordinario";
                 });
                 
               },
@@ -242,7 +249,7 @@ class _VistaGastosState extends State<VistaGastos> {
                 
                 icono = true;
                 setState(() {
-                  
+                  selectGasto = "ExtraOrdinario";
                 });
               },
               child: Text("Extraordinario",
@@ -477,10 +484,13 @@ class _VistaGastosState extends State<VistaGastos> {
                                             "Dia": DateTime.now().day, 
                                             "Año": DateTime.now().year,
                                             "Nombre": _nombreController.text,
-                                            "Cantidad": double.parse(_cantidadController.text)
+                                            "Cantidad": double.parse(_cantidadController.text),
+                                            "TipoGasto": tipoGasto,
+                                            "Usuario": widget.usuario
                                           }).then((value) {
                                             _nombreController.text="";
                                             _cantidadController.text="";
+                                            drop1=null;
                                           });
                                         
                                           Navigator.pop(context);
@@ -503,6 +513,37 @@ class _VistaGastosState extends State<VistaGastos> {
               margin: EdgeInsets.all(15),
               child: _buildTextFieldCantidad( Icons.attach_money, "Cantidad", _cantidadController),
             ),
+            Container(
+              margin: EdgeInsets.all(15),
+              child: CustomDropdown(
+               enabledColor: colorPrincipal,
+        disabledIconColor: Colors.white,
+        enabledIconColor: Colors.white,
+        enableTextColor: Colors.white,
+        elementTextColor: Colors.white,
+        openColor: colorPrincipal,
+        valueIndex: drop1,
+        hint: "Categoria",
+        items: [
+          CustomDropdownItem(text: "Ordinario"),
+          CustomDropdownItem(text: "ExtraOrdinario"),
+        ],
+        onChanged: (newValue) {
+          setState(() => drop1 = newValue);
+
+          switch(drop1)
+          {
+            case 0:
+            tipoGasto="Ordinario";
+            break;
+            case 1:
+            tipoGasto="ExtraOrdinario";
+            break;
+            
+          }
+        },
+      ),
+            )
             
             
           ],

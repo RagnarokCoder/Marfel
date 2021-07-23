@@ -10,7 +10,8 @@ import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 
 class InventarioMp extends StatefulWidget {
-  InventarioMp({Key key}) : super(key: key);
+  final String usuario;
+  InventarioMp({Key key, this.usuario}) : super(key: key);
 
   @override
   _InventarioMpState createState() => _InventarioMpState();
@@ -31,7 +32,7 @@ class _InventarioMpState extends State<InventarioMp> {
          centerTitle: true,
          
        ),
-       drawer: CustomAppbar(),
+       drawer: CustomAppBar(usuario: widget.usuario,),
        body: ListView(
          children: [
            icono == true?

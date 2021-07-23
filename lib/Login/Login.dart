@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
-import 'package:paleteria_marfel/Menu/PantallaInicio.dart';
-
+import 'package:provider/provider.dart';
+import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
+import 'package:paleteria_marfel/FirebaseAuth/Authentication_Service.dart';
 
 
 class Login extends StatefulWidget {
@@ -21,7 +21,9 @@ bool contraVal=true;
 class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
+      
       backgroundColor: Colors.white,
        body: ListView(
          children: [
@@ -102,8 +104,15 @@ class _LoginState extends State<Login> {
          
        ),
        bottomNavigationBar: GestureDetector(
-         onTap: (){
-          Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: PantallaInicio()));
+         onTap:  () {
+           if(_usuarioController.text.isEmpty || _passwordController.text.isEmpty)
+                                {
+                                  buildAlert(context);
+                                }
+                                else
+                                {
+                                  validarLogin();
+                                }
          },
          child: Container(
          height: MediaQuery.of(context).size.height*0.1,
@@ -183,6 +192,62 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+  void validarLogin()
+  {
+
+    context.read<AuthenticationService>().signIn(
+                  email: _usuarioController.text.trim(),
+                  password: _passwordController.text.trim(),
+                
+                );   
+                                                               
+  }
+  
+  
+
+  buildAlert(BuildContext context)
+  {
+    YudizModalSheet.show(
+    context: context,
+    child: Container(
+      decoration: BoxDecoration(
+                 color: Colors.white,
+                 borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50), bottomRight: Radius.circular(50))
+               ),
+      height: 100,
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 15,),
+            Text("No deje Campos Vacios", style: (
+                                      TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: colorPrincipal
+                                      )
+                                    ),),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RaisedButton.icon(
+                color: Colors.transparent,
+                elevation: 0,
+                onPressed: (){
+                  
+                 
+                  Navigator.pop(context);
+                }, 
+                icon: Icon(Icons.check_circle, color: Color(0xff00cf8d),), 
+                label: Text("Confirmar", style: TextStyle(color: colorPrincipal),)),
+                
+              ],
+            )
+          ],
+        )
+      ),
+    ),
+    direction: YudizModalSheetDirection.TOP);
   }
 }
 

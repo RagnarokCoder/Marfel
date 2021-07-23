@@ -7,7 +7,8 @@ import 'package:paleteria_marfel/Producci%C3%B3n/NuevaOrden.dart';
 
 
 class VistaProduccion extends StatefulWidget {
-  VistaProduccion({Key key}) : super(key: key);
+  final String usuario;
+  VistaProduccion({Key key, this.usuario}) : super(key: key);
 
   @override
   _VistaProduccionState createState() => _VistaProduccionState();
@@ -37,7 +38,7 @@ class _VistaProduccionState extends State<VistaProduccion> {
           
         ],
       ),
-      drawer: CustomAppbar(),
+      drawer: CustomAppBar(usuario: widget.usuario,),
       body: ListView(
         children: [
           Container(
