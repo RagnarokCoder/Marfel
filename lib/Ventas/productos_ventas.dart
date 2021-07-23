@@ -211,20 +211,62 @@ class _Orden extends StatelessWidget {
           ],
         ),
         Divider(),
-        Row(
-          children: [
-            Container(
-              child: Image(
-                  height: height * .08,
-                  image: AssetImage('assets/paletaPor.jpg')),
-            ),
-            Text('Paleton de fresa de agua'),
-            CounterView(
-              initNumber: 1,
-              minNumber: 1,
-            ),
-          ],
+        _CardOrden(height: height),
+        _CardOrden(height: height),
+        _CardOrden(height: height),
+        _CardOrden(height: height),
+        Spacer(),
+        Container(
+          margin: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              Text(
+                'Total:',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '544',
+                style: TextStyle(fontSize: 24),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _CardOrden extends StatelessWidget {
+  const _CardOrden({
+    Key key,
+    @required this.height,
+  }) : super(key: key);
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          child: Image(
+              height: height * .08, image: AssetImage('assets/paletaPor.jpg')),
         ),
+        Text('Paleta agua fresa'),
+        CounterView(
+          initNumber: 1,
+          minNumber: 1,
+        ),
+        Container(
+            margin: EdgeInsets.only(left: height * .01),
+            child: Text(' 14 c/u')),
+        Spacer(),
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.delete_outlined,
+              color: Colors.red,
+            )),
       ],
     );
   }
