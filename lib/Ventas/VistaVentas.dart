@@ -31,39 +31,7 @@ int cantidad;
 int nuevaCantidadInventario = 0;
 List<Map<String, dynamic>> carrito = [];
 
-getProductos() async {
-  var url = 'https://api-paleteria-marfel.herokuapp.com/api/v1/product';
-  final response = await http.get(url, headers: {
-    'content-type': 'application/json',
-    'Accept': 'application/json',
-  });
-
-  return json.decode(response.body)['data']['productos'];
-}
-
 class _VistaVentasState extends State<VistaVentas> {
-  getInventario() async {
-    var url = 'https://api-paleteria-marfel.herokuapp.com/api/v1/molde';
-    final response = await http.get(url, headers: {
-      'content-type': 'application/json',
-      'Accept': 'application/json',
-    });
-
-    print(json.decode(response.body)['data']['moldes']);
-
-    return json.decode(response.body)['data']['moldes'];
-  }
-
-  @override
-  void initState() {
-    getInventario().then((body) {
-      inventario = body;
-      setState(() {});
-    });
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -110,8 +78,19 @@ class _VistaVentasState extends State<VistaVentas> {
 
   Widget _tableCards() {
     return ListView(children: [
-      //CardMolde(title: inventario[0]['nombre'], img: inventario[0]['img']),
-
+      CurvedListItemWhite(
+        title: 'Paletas',
+        time: '',
+        asset: "assets/paletaPor.jpg",
+        color: Colors.white,
+        nextColor: colorPrincipal,
+        press: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SalesProducts(
+                    categoria: "Paleta",
+                  )));
+        },
+      ),
       CurvedListItem(
         title: 'Helado',
         time: '',
