@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icon_badge/icon_badge.dart';
-import 'package:paleteria_marfel/CustomWidgets/Counter_number.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
+import 'package:paleteria_marfel/Ventas/Carrito.dart';
 
 class SalesProducts extends StatefulWidget {
   final String categoria;
@@ -157,110 +157,6 @@ class _SalesProductsState extends State<SalesProducts> {
   }
 }
 
-class Orden extends StatelessWidget {
-  const Orden({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Row(
-          children: [
-            Container(margin: EdgeInsets.only(left: 10), child: Text('Orden:')),
-            Spacer(),
-            Container(
-              margin: EdgeInsets.only(right: 10),
-              child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.delete_forever,
-                    color: Colors.red,
-                  )),
-            )
-          ],
-        ),
-        Divider(),
-        Container(
-          width: width,
-          height: height * 3 / 8,
-          child: ListView(
-            children: [
-              _CardOrden(height: height),
-              _CardOrden(height: height),
-              _CardOrden(height: height),
-              _CardOrden(height: height),
-            ],
-          ),
-        ),
-        Divider(),
-        Container(
-          margin: EdgeInsets.all(10),
-          child: Row(
-            children: [
-              Text(
-                'Total:',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                width: 100,
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15), color: Colors.red),
-                child: Text(
-                  '\$544',
-                  style: TextStyle(fontSize: 24),
-                ),
-              )
-            ],
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class _CardOrden extends StatelessWidget {
-  const _CardOrden({
-    Key key,
-    @required this.height,
-  }) : super(key: key);
-
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          child: Image(
-              height: height * .08, image: AssetImage('assets/paletaPor.jpg')),
-        ),
-        Text('Paleta agua fresa'),
-        CounterView(
-          initNumber: 1,
-          minNumber: 1,
-        ),
-        Container(
-            margin: EdgeInsets.only(left: height * .01),
-            child: Text(' \$ 14 c/u')),
-        Spacer(),
-        IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.delete_outlined,
-              color: Colors.red,
-            )),
-      ],
-    );
-  }
-}
-
 class CardMolde extends StatelessWidget {
   final String title;
   final String img;
@@ -301,6 +197,7 @@ class CardMolde extends StatelessWidget {
             ),
             Container(
                 width: width * .25, child: Image(image: NetworkImage(img))),
+            Container(width: width * .25, child: Text(title)),
             Container(
                 margin: EdgeInsets.only(bottom: width * .05),
                 width: width * .25,
