@@ -71,7 +71,7 @@ class _SalesProductsState extends State<SalesProducts> {
                           return Container(
                             width: width,
                             height: height * 6 / 7,
-                            child: _Orden(),
+                            child: Orden(),
                           );
                         },
                         context: context);
@@ -101,9 +101,9 @@ class _SalesProductsState extends State<SalesProducts> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2, //columnas
-                      mainAxisSpacing: 30.0, //espacio entre cards
+                      mainAxisSpacing: 10.0, //espacio entre cards
                       crossAxisSpacing: 10,
-                      childAspectRatio: .87, // largo de la card
+                      childAspectRatio: 1, // largo de la card
                     ),
                     itemCount: length,
                     itemBuilder: (BuildContext context, int index) {
@@ -111,11 +111,14 @@ class _SalesProductsState extends State<SalesProducts> {
                       print(doc.toString());
                       if (doc.data()['Imagen'] != null) {
                         return CardMolde(
-                            title: doc.data()['NombreProducto'],
-                            img: doc.data()['Imagen']);
+                          title: doc.data()['NombreProducto'],
+                          img: doc.data()['Imagen'],
+                          molde: doc.data()['Molde'],
+                        );
                       }
                       return CardMolde(
                           title: doc.data()['NombreProducto'],
+                          molde: doc.data()['Molde'],
                           img:
                               'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
                     },
@@ -127,12 +130,6 @@ class _SalesProductsState extends State<SalesProducts> {
     );
   }
 
-/*
-CardMolde(
-                        title: '',
-                        img:
-                            'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
-*/
   Container _return(BuildContext context) {
     return Container(
       width: 50,
@@ -158,42 +155,19 @@ CardMolde(
       ),
     );
   }
-
-  TableRow _tableRow(
-      {@required String title2,
-      @required String img2,
-      @required String title1,
-      @required String img1}) {
-    if (img2 != '')
-      return TableRow(children: [
-        CardMolde(
-          title: title2,
-          img: img2,
-        ),
-        CardMolde(
-          title: title1,
-          img: img1,
-        ),
-      ]);
-    return TableRow(children: [
-      CardMolde(
-        title: title1,
-        img: img1,
-      ),
-      Container(),
-    ]);
-  }
 }
 
-class _Orden extends StatelessWidget {
-  const _Orden({
+class Orden extends StatelessWidget {
+  const Orden({
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Row(
           children: [
@@ -211,11 +185,19 @@ class _Orden extends StatelessWidget {
           ],
         ),
         Divider(),
-        _CardOrden(height: height),
-        _CardOrden(height: height),
-        _CardOrden(height: height),
-        _CardOrden(height: height),
-        Spacer(),
+        Container(
+          width: width,
+          height: height * 3 / 8,
+          child: ListView(
+            children: [
+              _CardOrden(height: height),
+              _CardOrden(height: height),
+              _CardOrden(height: height),
+              _CardOrden(height: height),
+            ],
+          ),
+        ),
+        Divider(),
         Container(
           margin: EdgeInsets.all(10),
           child: Row(
@@ -224,9 +206,16 @@ class _Orden extends StatelessWidget {
                 'Total:',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              Text(
-                '544',
-                style: TextStyle(fontSize: 24),
+              Container(
+                width: 100,
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15), color: Colors.red),
+                child: Text(
+                  '\$544',
+                  style: TextStyle(fontSize: 24),
+                ),
               )
             ],
           ),
@@ -259,7 +248,7 @@ class _CardOrden extends StatelessWidget {
         ),
         Container(
             margin: EdgeInsets.only(left: height * .01),
-            child: Text(' 14 c/u')),
+            child: Text(' \$ 14 c/u')),
         Spacer(),
         IconButton(
             onPressed: () {},
@@ -275,7 +264,9 @@ class _CardOrden extends StatelessWidget {
 class CardMolde extends StatelessWidget {
   final String title;
   final String img;
-  const CardMolde({Key key, @required this.title, @required this.img})
+  final String molde;
+  const CardMolde(
+      {Key key, @required this.title, @required this.img, this.molde})
       : super(key: key);
   @override
   Widget build(BuildContext context) {

@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:paleteria_marfel/Ventas/productos_ventas.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
+import 'productos_ventas.dart';
 
 class VistaVentas extends StatefulWidget {
   @override
@@ -62,7 +63,8 @@ class _VistaVentasState extends State<VistaVentas> {
                           builder: (BuildContext context) {
                             return Container(
                               width: width,
-                              height: height * 5 / 6,
+                              height: height * 6 / 7,
+                              child: Orden(),
                             );
                           },
                           context: context);
