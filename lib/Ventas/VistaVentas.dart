@@ -8,6 +8,7 @@ import 'package:paleteria_marfel/Ventas/Carrito.dart';
 import 'package:paleteria_marfel/Ventas/NuevaVenta.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 import 'productos_ventas.dart';
@@ -31,11 +32,11 @@ dynamic total = 0;
 dynamic totalfinal = 0;
 int cantidad;
 int nuevaCantidadInventario = 0;
-List<Map<String, dynamic>> carrito = [];
 
 class _VistaVentasState extends State<VistaVentas> {
   @override
   Widget build(BuildContext context) {
+    getCarr();
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -147,5 +148,12 @@ class _VistaVentasState extends State<VistaVentas> {
         },
       ),
     ]);
+  }
+
+  Future<void> getCarr() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String carr = prefs.getString('carrito');
+    if (carr != '') carrito = json.decode(carr);
   }
 }

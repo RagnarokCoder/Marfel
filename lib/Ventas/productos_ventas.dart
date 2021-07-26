@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:icon_badge/icon_badge.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:paleteria_marfel/Ventas/Carrito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+List carrito = [];
 
 class SalesProducts extends StatefulWidget {
   final String categoria;
@@ -22,7 +27,7 @@ class _SalesProductsState extends State<SalesProducts> {
   @override
   void initState() {
     super.initState();
-
+    setCarrito();
     FirebaseFirestore.instance
         .collection("Inventario")
         .snapshots()
@@ -65,13 +70,12 @@ class _SalesProductsState extends State<SalesProducts> {
                   itemColor: colorPrincipal,
                   hideZero: true,
                   onTap: () {
-                    print('h');
                     showModalBottomSheet(
                         builder: (BuildContext context) {
                           return Container(
                             width: width,
                             height: height * 6 / 7,
-                            child: Orden(),
+                            child: Orden(delete: deleteCarrito()),
                           );
                         },
                         context: context);
@@ -130,6 +134,13 @@ class _SalesProductsState extends State<SalesProducts> {
     );
   }
 
+  Future setCarrito() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      carrito = json.decode(prefs.getString('carrito'));
+    });
+  }
+
   Container _return(BuildContext context) {
     return Container(
       width: 50,
@@ -154,6 +165,10 @@ class _SalesProductsState extends State<SalesProducts> {
         ),
       ),
     );
+  }
+
+  deleteCarrito() {
+    carrito = [];
   }
 }
 
@@ -191,20 +206,41 @@ class CardMolde extends StatelessWidget {
                         Icons.add,
                         color: colorPrincipal,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        addItem();
+                      },
                     ))
               ],
             ),
             Container(
                 width: width * .25, child: Image(image: NetworkImage(img))),
-            Container(width: width * .25, child: Text(title)),
+            Container(child: Text(title)),
             Container(
                 margin: EdgeInsets.only(bottom: width * .05),
-                width: width * .25,
                 child: Text(title)),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> addItem() async {
+    if (carrito.where((element) => element[title]) != null) {
+      carrito.add({
+        'nombre': title,
+        'img': img,
+        'molde': molde,
+        'count': 1,
+        'price': 14
+      });
+    } else {
+      int index = carrito.indexWhere((element) => element.containsValue(title));
+
+      carrito[index].update('count', (value) => value++);
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String carr = json.encode(carrito);
+    await prefs.setString('carrito', carr);
+    print(prefs.getString('carrito'));
   }
 }
