@@ -28,23 +28,6 @@ class _SalesProductsState extends State<SalesProducts> {
   void initState() {
     super.initState();
     setCarrito();
-    FirebaseFirestore.instance
-        .collection("Inventario")
-        .snapshots()
-        .listen((result) {
-      documents = 0;
-      result.docs.forEach((result) {
-        setState(() {
-          if (result.data()['Limitar'] != null &&
-              result.data()['Categoria'] == categoria &&
-              result.data()['Pendiente'] == true) {
-            if (result.data()['Limitar'] < result.data()['Cantidad']) {
-              documents = documents + 1;
-            }
-          }
-        });
-      });
-    });
   }
 
   @override
@@ -75,7 +58,7 @@ class _SalesProductsState extends State<SalesProducts> {
                           return Container(
                             width: width,
                             height: height * 6 / 7,
-                            child: Orden(delete: deleteCarrito()),
+                            child: Orden(),
                           );
                         },
                         context: context);
@@ -115,12 +98,14 @@ class _SalesProductsState extends State<SalesProducts> {
                       print(doc.toString());
                       if (doc.data()['Imagen'] != null) {
                         return CardMolde(
+                          max: doc.data()['Cantidad'],
                           title: doc.data()['NombreProducto'],
                           img: doc.data()['Imagen'],
                           molde: doc.data()['Molde'],
                         );
                       }
                       return CardMolde(
+                          max: doc.data()['Cantidad'],
                           title: doc.data()['NombreProducto'],
                           molde: doc.data()['Molde'],
                           img:
@@ -167,17 +152,25 @@ class _SalesProductsState extends State<SalesProducts> {
     );
   }
 
-  deleteCarrito() {
-    carrito = [];
+  updateCarrito() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    carrito = json.decode(prefs.getString('carrito'));
   }
 }
 
 class CardMolde extends StatelessWidget {
   final String title;
+
   final String img;
   final String molde;
+  final int max;
   const CardMolde(
-      {Key key, @required this.title, @required this.img, this.molde})
+      {Key key,
+      @required this.title,
+      @required this.img,
+      this.molde,
+      @required this.max})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -217,7 +210,7 @@ class CardMolde extends StatelessWidget {
             Container(child: Text(title)),
             Container(
                 margin: EdgeInsets.only(bottom: width * .05),
-                child: Text(title)),
+                child: Text(molde)),
           ],
         ),
       ),
@@ -225,20 +218,23 @@ class CardMolde extends StatelessWidget {
   }
 
   Future<void> addItem() async {
-    if (carrito.where((element) => element[title]) != null) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    carrito = json.decode(prefs.getString('carrito'));
+    int index = carrito.indexWhere((element) =>
+        element.containsValue(title) && element.containsValue(molde));
+    if (index != -1) {
+      carrito[index]['count']++;
+    } else {
       carrito.add({
         'nombre': title,
         'img': img,
         'molde': molde,
         'count': 1,
-        'price': 14
+        'price': 14,
+        'max': max
       });
-    } else {
-      int index = carrito.indexWhere((element) => element.containsValue(title));
-
-      carrito[index].update('count', (value) => value++);
     }
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String carr = json.encode(carrito);
     await prefs.setString('carrito', carr);
     print(prefs.getString('carrito'));

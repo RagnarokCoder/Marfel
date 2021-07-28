@@ -6,15 +6,15 @@ import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Orden extends StatefulWidget {
-  Orden({Key key, this.delete}) : super(key: key);
-  final Function delete;
+  Orden({Key key}) : super(key: key);
+
   @override
-  _OrdenState createState() => _OrdenState(delete: delete);
+  _OrdenState createState() => _OrdenState();
 }
 
 class _OrdenState extends State<Orden> {
-  _OrdenState({this.delete});
-  Function delete;
+  _OrdenState();
+
   List carrito = [];
   Color colorButton = colorPrincipal;
 
@@ -61,8 +61,15 @@ class _OrdenState extends State<Orden> {
               total += (carrito[index]['price']) * carrito[index]['count'];
 
               return _CardOrden(
+                  delete: () {
+                    setState(() {
+                      delete(carrito[index]['molde'], carrito[index]['nombre']);
+                    });
+                  },
+                  max: carrito[index]['max'],
                   counter: carrito[index]['count'],
                   name: carrito[index]['nombre'],
+                  molde: carrito[index]['molde'],
                   price: carrito[index]['price']);
             },
           ),
@@ -149,44 +156,78 @@ class _OrdenState extends State<Orden> {
       carrito = json.decode(prefs.getString('carrito'));
     });
   }
+
+  Future<void> delete(String name, String molde) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int index = carrito.indexWhere((element) =>
+        element.containsValue(name) && element.containsValue(molde));
+    carrito.removeAt(index);
+    var carEncode = json.encode(carrito);
+    prefs.setString('carrito', carEncode);
+  }
 }
 
 class _CardOrden extends StatelessWidget {
-  const _CardOrden({
-    Key key,
-    @required this.counter,
-    @required this.name,
-    @required this.price,
-  }) : super(key: key);
+  const _CardOrden(
+      {Key key,
+      @required this.counter,
+      @required this.delete,
+      @required this.name,
+      @required this.price,
+      @required this.molde,
+      @required this.max})
+      : super(key: key);
+  final Function delete;
   final int price;
   final int counter;
+  final int max;
   final String name;
+  final String molde;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Row(
       children: [
         Container(
           child: Image(
               height: height * .06, image: AssetImage('assets/paletaPor.jpg')),
         ),
-        Text(name),
+        Container(width: width * .3, child: Text(molde + ' ' + name)),
         CounterView(
           initNumber: counter,
           minNumber: 1,
+          decreaseCallback: () => change(false),
+          increaseCallback: () => change(true),
+          maxNumber: max,
         ),
         Container(
+            width: width * .2,
             margin: EdgeInsets.only(left: height * .01),
             child: Text(' \$ $price c/u')),
         Spacer(),
         IconButton(
-            onPressed: () {},
+            onPressed: () {
+              delete();
+            },
             icon: Icon(
               Icons.delete_outlined,
               color: Colors.red,
             )),
       ],
     );
+  }
+
+  change(bool choice) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List carrito = json.decode(prefs.getString('carrito'));
+    int index = carrito.indexWhere((element) =>
+        element.containsValue(name) && element.containsValue(molde));
+    carrito = json.decode(prefs.getString('carrito'));
+    if (choice) carrito[index]['count']++;
+    if (!choice) carrito[index]['count']--;
+    var carEncode = json.encode(carrito);
+    prefs.setString('carrito', carEncode);
   }
 }
 
@@ -196,12 +237,14 @@ class CounterView extends StatefulWidget {
   final Function increaseCallback;
   final Function decreaseCallback;
   final int minNumber;
+  final int maxNumber;
   CounterView(
       {this.initNumber,
       this.counterCallback,
       this.increaseCallback,
       this.decreaseCallback,
-      this.minNumber});
+      this.minNumber,
+      this.maxNumber});
   @override
   _CounterViewState createState() => _CounterViewState();
 }
@@ -212,6 +255,7 @@ class _CounterViewState extends State<CounterView> {
   Function _increaseCallback;
   Function _decreaseCallback;
   int _minNumber;
+  int _maxNumber;
 
   @override
   void initState() {
@@ -220,6 +264,7 @@ class _CounterViewState extends State<CounterView> {
     _increaseCallback = widget.increaseCallback ?? () {};
     _decreaseCallback = widget.decreaseCallback ?? () {};
     _minNumber = widget.minNumber ?? 0;
+    _maxNumber = widget.maxNumber ?? 100;
     super.initState();
   }
 
@@ -246,9 +291,11 @@ class _CounterViewState extends State<CounterView> {
 
   void _increment() {
     setState(() {
-      _currentCount++;
-      _counterCallback(_currentCount);
-      _increaseCallback();
+      if (_currentCount < _maxNumber) {
+        _currentCount++;
+        _counterCallback(_currentCount);
+        _increaseCallback();
+      }
     });
   }
 
