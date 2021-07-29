@@ -17,7 +17,7 @@ class VistaVentas extends StatefulWidget {
   final String usuario;
   VistaVentas({Key key, this.usuario}) : super(key: key);
   @override
-  _VistaVentasState createState() => _VistaVentasState();
+  _VistaVentasState createState() => _VistaVentasState(usuario: usuario);
 }
 
 bool icono = false;
@@ -36,6 +36,9 @@ int cantidad;
 int nuevaCantidadInventario = 0;
 
 class _VistaVentasState extends State<VistaVentas> {
+  final String usuario;
+  _VistaVentasState({this.usuario});
+
   @override
   Widget build(BuildContext context) {
     getCarr();
@@ -78,7 +81,9 @@ class _VistaVentasState extends State<VistaVentas> {
               ),
             ]),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        drawer: CustomAppBar(),
+        drawer: CustomAppBar(
+          usuario: widget.usuario,
+        ),
         body: _tableCards());
   }
 
@@ -94,6 +99,7 @@ class _VistaVentasState extends State<VistaVentas> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => SalesProducts(
                     categoria: "Paleta",
+                    usuario: usuario,
                   )));
         },
       ),
@@ -154,7 +160,7 @@ class _VistaVentasState extends State<VistaVentas> {
 
   Future<void> getCarr() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    if (prefs.getString('carrito') == null) prefs.setString('carrito', '[]');
     String carr = prefs.getString('carrito');
     if (carr != '') carrito = json.decode(carr);
   }

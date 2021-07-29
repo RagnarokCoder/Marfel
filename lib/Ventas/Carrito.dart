@@ -153,6 +153,7 @@ class _OrdenState extends State<Orden> {
   Future setCarrito() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      if (prefs.getString('carrito') == null) prefs.setString('carrito', '[]');
       carrito = json.decode(prefs.getString('carrito'));
     });
   }

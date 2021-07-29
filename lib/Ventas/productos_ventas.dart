@@ -12,7 +12,9 @@ List carrito = [];
 
 class SalesProducts extends StatefulWidget {
   final String categoria;
-  const SalesProducts({Key key, @required this.categoria}) : super(key: key);
+  final String usuario;
+  const SalesProducts({Key key, @required this.categoria, this.usuario})
+      : super(key: key);
 
   @override
   _SalesProductsState createState() =>
@@ -21,6 +23,7 @@ class SalesProducts extends StatefulWidget {
 
 class _SalesProductsState extends State<SalesProducts> {
   final String categoria;
+
   int documents = 0;
   _SalesProductsState({this.categoria});
 
@@ -67,7 +70,9 @@ class _SalesProductsState extends State<SalesProducts> {
               ],
             ),
           ]),
-      drawer: CustomAppBar(),
+      drawer: CustomAppBar(
+        usuario: widget.usuario,
+      ),
       body: ListView(
         children: [
           _return(context),
@@ -121,7 +126,9 @@ class _SalesProductsState extends State<SalesProducts> {
 
   Future setCarrito() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
+      if (prefs.getString('carrito') == null) prefs.setString('carrito', '[]');
       carrito = json.decode(prefs.getString('carrito'));
     });
   }
