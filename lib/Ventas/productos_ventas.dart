@@ -56,6 +56,7 @@ class _SalesProductsState extends State<SalesProducts> {
                   itemColor: colorPrincipal,
                   hideZero: true,
                   onTap: () {
+                    setState(() {});
                     showModalBottomSheet(
                         builder: (BuildContext context) {
                           return Container(
