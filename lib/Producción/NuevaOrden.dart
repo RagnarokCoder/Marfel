@@ -29,12 +29,13 @@ dynamic aux = 0;
 int moldeCat = 0;
 double _currentSliderValue = 0;
 int drop1, drop2, drop3;
-bool icono;
+bool icono = false;
 String categoria;
 String materia;
 bool prodPart = false;
-List<String> productos = [];
+List<Map<String, dynamic>> productos = [];
 String numeroTambos;
+Map<String, dynamic> mapProductos = {};
 
 class _NuevaOrdenState extends State<NuevaOrden> {
   @override
@@ -81,248 +82,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                                     _pickCategory(),
                                   ],
                                 ),
-                                selectedCurrency1 != null
-                                    ? SizedBox()
-                                    : Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.08,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.71,
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: colorPrincipal,
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20)),
-                                              shape: BoxShape.rectangle),
-                                          child: Row(
-                                            children: [
-                                              InkWell(
-                                                child: Container(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.1,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.35,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              topLeft: Radius
-                                                                  .circular(20),
-                                                              bottomLeft: Radius
-                                                                  .circular(
-                                                                      20)),
-                                                      color: icono == false
-                                                          ? colorPrincipal
-                                                          : Colors.white,
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Agua",
-                                                        style: TextStyle(
-                                                            color: icono ==
-                                                                    false
-                                                                ? Colors.white
-                                                                : colorPrincipal,
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    )),
-                                                onTap: () {
-                                                  setState(() {
-                                                    materia = "Agua";
-                                                    icono = false;
-                                                  });
-                                                },
-                                              ),
-                                              InkWell(
-                                                child: Container(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.1,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.35,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              topRight: Radius
-                                                                  .circular(20),
-                                                              bottomRight:
-                                                                  Radius
-                                                                      .circular(
-                                                                          20)),
-                                                      color: icono == true
-                                                          ? colorPrincipal
-                                                          : Colors.white,
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Leche",
-                                                        style: TextStyle(
-                                                            color: icono == true
-                                                                ? Colors.white
-                                                                : colorPrincipal,
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    )),
-                                                onTap: () {
-                                                  setState(() {
-                                                    materia = "Leche";
-                                                    icono = true;
-                                                  });
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        )),
-                                icono == null
-                                    ? SizedBox()
-                                    : Container(
-                                        margin: EdgeInsets.all(20),
-                                        decoration: BoxDecoration(
-                                            color: colorPrincipal,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(25))),
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.09,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              "Sabor: ",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Expanded(
-                                              child: StreamBuilder<
-                                                      QuerySnapshot>(
-                                                  stream: FirebaseFirestore
-                                                      .instance
-                                                      .collection(
-                                                          'ProductosCompras')
-                                                      .snapshots(),
-                                                  builder: (context, snapshot) {
-                                                    if (!snapshot.hasData)
-                                                      const Text(
-                                                          "Loading.....");
-                                                    else {
-                                                      List<DropdownMenuItem>
-                                                          currencyItems = [];
-                                                      for (int i = 0;
-                                                          i <
-                                                              snapshot.data.docs
-                                                                  .length;
-                                                          i++) {
-                                                        DocumentSnapshot snap =
-                                                            snapshot
-                                                                .data.docs[i];
-                                                        currencyItems.add(
-                                                          DropdownMenuItem(
-                                                            child: Text(
-                                                              "${snap.data()['Nombre']}",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                            value:
-                                                                "${snap.data()['Nombre']}",
-                                                          ),
-                                                        );
-                                                      }
-                                                      return Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: <Widget>[
-                                                          DropdownButton(
-                                                            items:
-                                                                currencyItems,
-                                                            onChanged:
-                                                                (currencyValue) {
-                                                              final snackBar =
-                                                                  SnackBar(
-                                                                backgroundColor:
-                                                                    colorPrincipal,
-                                                                content: Text(
-                                                                  'Producto: $currencyValue',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white),
-                                                                ),
-                                                              );
-                                                              // ignore: deprecated_member_use
-                                                              Scaffold.of(
-                                                                      context)
-                                                                  // ignore: deprecated_member_use
-                                                                  .showSnackBar(
-                                                                      snackBar);
-
-                                                              setState(() {
-                                                                selectedCurrency1 =
-                                                                    currencyValue;
-                                                                productos.add(
-                                                                    currencyValue
-                                                                        .toString());
-                                                                print(
-                                                                    productos);
-                                                              });
-                                                            },
-                                                            value:
-                                                                selectedCurrency1,
-                                                            isExpanded: false,
-                                                            hint: new Text(
-                                                              "Nombre: ",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                            dropdownColor:
-                                                                colorPrincipal,
-                                                            icon: Icon(
-                                                              Icons
-                                                                  .arrow_drop_down,
-                                                              color:
-                                                                  Colors.white,
-                                                              size: 22.0,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-                                                    return LinearProgressIndicator();
-                                                  }),
-                                            )
-                                          ],
-                                        )),
+                                categoria == null ? SizedBox() : _pickFlavor(),
                               ],
                             ),
                           ),
@@ -330,7 +90,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                               ? SizedBox()
                               : Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.15,
+                                      MediaQuery.of(context).size.height * 0.55,
                                   margin: EdgeInsets.only(left: 20, right: 20),
                                   child: ListView(
                                     children: [
@@ -352,7 +112,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                                             FlatButton.icon(
                                                 onPressed: () {
                                                   setState(() {
-                                                    productos.removeLast();
+                                                    productos.clear();
                                                   });
                                                 },
                                                 icon: Icon(Icons.delete,
@@ -369,346 +129,74 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                                         ),
                                       ),
                                       for (int i = 0; i < productos.length; i++)
-                                        Text(
-                                          "- ${productos[i]}",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold),
+                                        Container(
+                                          margin: EdgeInsets.all(10),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .8,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .05,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: colorPrincipal,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                margin: EdgeInsets.all(10),
+                                                child: Text(
+                                                  productos[i]
+                                                      .keys
+                                                      .toString()
+                                                      .replaceAll(")", "")
+                                                      .replaceAll("(", ""),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Container(
+                                                child: Text(mapProductos[
+                                                        productos[i]
+                                                            .keys
+                                                            .toString()
+                                                            .replaceAll(")", "")
+                                                            .replaceAll(
+                                                                "(", "")]
+                                                    .toString()),
+                                              )
+                                            ],
+                                          ),
                                         )
                                     ],
                                   ),
                                 ),
-                          materia != null && drop1 == 0 ||
-                                  drop1 == 2 ||
-                                  drop1 == 3 ||
-                                  drop1 == 4
-                              ? Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.08,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.35,
-                                  child: CustomDropdown(
-                                    enabledColor: colorPrincipal,
-                                    disabledIconColor: Colors.white,
-                                    enabledIconColor: Colors.white,
-                                    enableTextColor: Colors.white,
-                                    elementTextColor: Colors.white,
-                                    openColor: colorPrincipal,
-                                    valueIndex: drop2,
-                                    hint: "Tambos",
-                                    items: [
-                                      CustomDropdownItem(text: "1/2"),
-                                      CustomDropdownItem(text: "1"),
-                                      CustomDropdownItem(text: "2"),
-                                      CustomDropdownItem(text: "3"),
-                                      CustomDropdownItem(text: "4"),
-                                      CustomDropdownItem(text: "5"),
-                                      CustomDropdownItem(text: "6"),
-                                    ],
-                                    onChanged: (newValue) {
-                                      setState(() => drop2 = newValue);
-                                      setState(() {
-                                        switch (drop2) {
-                                          case 0:
-                                            numeroTambos = ".5";
-                                            break;
-                                          case 1:
-                                            numeroTambos = "1";
-                                            break;
-                                          case 2:
-                                            numeroTambos = "2";
-                                            break;
-                                          case 3:
-                                            numeroTambos = "3";
-                                            break;
-                                          case 4:
-                                            numeroTambos = "4";
-                                            break;
-                                          case 5:
-                                            numeroTambos = "5";
-                                            break;
-                                          case 6:
-                                            numeroTambos = "6";
-                                            break;
-                                        }
-                                      });
-                                    },
-                                  ),
-                                )
-                              : selectedCurrency1 != null && drop1 == 1
-                                  ? Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.08,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.35,
-                                      child: CustomDropdown(
-                                        enabledColor: colorPrincipal,
-                                        disabledIconColor: Colors.white,
-                                        enabledIconColor: Colors.white,
-                                        enableTextColor: Colors.white,
-                                        elementTextColor: Colors.white,
-                                        openColor: colorPrincipal,
-                                        valueIndex: drop2,
-                                        hint: "Tandas",
-                                        items: [
-                                          CustomDropdownItem(text: "1/2"),
-                                          CustomDropdownItem(text: "1"),
-                                          CustomDropdownItem(text: "2"),
-                                          CustomDropdownItem(text: "3"),
-                                          CustomDropdownItem(text: "4"),
-                                          CustomDropdownItem(text: "5"),
-                                          CustomDropdownItem(text: "6"),
-                                        ],
-                                        onChanged: (newValue) {
-                                          setState(() => drop2 = newValue);
-                                          setState(() {
-                                            switch (drop2) {
-                                              case 0:
-                                                numeroTambos = ".5";
-                                                break;
-                                              case 1:
-                                                numeroTambos = "1";
-                                                break;
-                                              case 2:
-                                                numeroTambos = "2";
-                                                break;
-                                              case 3:
-                                                numeroTambos = "3";
-                                                break;
-                                              case 4:
-                                                numeroTambos = "4";
-                                                break;
-                                              case 5:
-                                                numeroTambos = "5";
-                                                break;
-                                              case 6:
-                                                numeroTambos = "6";
-                                                break;
-                                            }
-                                          });
-                                          print(numeroTambos);
-                                        },
-                                      ),
-                                    )
-                                  : SizedBox(),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          selectedCurrency1 != null && drop1 == 2 ||
-                                  drop1 == 3 ||
-                                  drop1 == 4
-                              ? Container(
-                                  color: Colors.red,
-                                  margin: EdgeInsets.only(left: 20, right: 20),
-                                  child: _buildTextField(
-                                      Icons.add, "Piezas", _piezasController),
-                                )
-                              : SizedBox()
                         ],
                       )
                     : Column(
                         children: [
-                          categoria == "Paleta"
-                              ? Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.8,
-                                  child: ListView(
-                                    children: [
-                                      SizedBox(
-                                        height: 15,
-                                      ),
-                                      Center(
-                                        child: Text(
-                                          "Productos",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          for (int i = 0;
-                                              i < productos.length;
-                                              i++)
-                                            Text(
-                                              "- ${productos[i]}",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 14,
-                                              ),
-                                            )
-                                        ],
-                                      ),
-                                      materia == "Agua"
-                                          ? Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 20, right: 20),
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.4,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  _buildTextField(Icons.add,
-                                                      "Maxi", _maxiController),
-                                                  _buildTextField(
-                                                      Icons.add,
-                                                      "Hexagonal",
-                                                      _hexaController),
-                                                  _buildTextField(
-                                                      Icons.add,
-                                                      "Cuadraleta",
-                                                      _cuadController),
-                                                ],
-                                              ),
-                                            )
-                                          : Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 20, right: 20),
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.4,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  _buildTextField(
-                                                      Icons.add,
-                                                      "Hexagonal",
-                                                      _hexaController),
-                                                  _buildTextField(
-                                                      Icons.add,
-                                                      "Cuadraleta",
-                                                      _cuadController),
-                                                ],
-                                              ),
-                                            ),
-                                      FlatButton.icon(
-                                        icon: Icon(Icons.check),
-                                        label: Text(
-                                          "Generar Orden",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        onPressed: () {
-                                          if (materia == "Agua" &&
-                                              categoria == "Paleta") {
-                                            subirPaletaAgua();
-                                            buildAlert(context);
-                                          }
-                                          if (materia == "Leche" &&
-                                              categoria == "Paleta") {
-                                            subirPaletaLeche();
-                                            buildAlert(context);
-                                          }
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                )
-                              : categoria == "Helado"
-                                  ? Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.8,
-                                      child: ListView(
-                                        children: [
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Center(
-                                            child: Text(
-                                              "Productos",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              for (int i = 0;
-                                                  i < productos.length;
-                                                  i++)
-                                                Text(
-                                                  "- ${productos[i]}",
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14,
-                                                  ),
-                                                )
-                                            ],
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                                left: 20, right: 20),
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.4,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                _buildTextField(Icons.add, "5L",
-                                                    _fiveLController),
-                                                _buildTextField(Icons.add, "1L",
-                                                    _oneLController),
-                                              ],
-                                            ),
-                                          ),
-                                          FlatButton.icon(
-                                            icon: Icon(Icons.check),
-                                            label: Text(
-                                              "Generar Orden",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            onPressed: () {
-                                              subirHelado();
-                                              buildAlert(context);
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  : FlatButton.icon(
-                                      icon: Icon(Icons.check),
-                                      label: Text(
-                                        "Generar Orden",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      onPressed: () {
-                                        if (categoria == "Sandwich") {
-                                          subirSandwich();
-                                          buildAlert(context);
-                                        }
-
-                                        if (categoria == "Troles") {
-                                          subirTroll();
-                                          buildAlert(context);
-                                        }
-                                      },
-                                    )
+                          FlatButton.icon(
+                            icon: Icon(Icons.check),
+                            label: Text(
+                              "Generar Orden",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: () {
+                              if (categoria == "Troles") {
+                                subirTroll();
+                                buildAlert(context);
+                              }
+                            },
+                          )
                         ],
                       )),
             Positioned(
@@ -786,6 +274,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
     }
     FirebaseFirestore.instance.collection("Produccion").add({
       "Sabor": productos,
+      "Date": DateTime.now(),
       "Dia": DateTime.now().day,
       "Mes": DateTime.now().month,
       "Año": DateTime.now().year,
@@ -1197,6 +686,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
           CustomDropdownItem(text: "Helado"),
           CustomDropdownItem(text: "Sandwich"),
           CustomDropdownItem(text: "Bolis"),
+          CustomDropdownItem(text: "Bolito"),
           CustomDropdownItem(text: "Troles"),
         ],
         onChanged: (newValue) {
@@ -1205,6 +695,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
           switch (drop1) {
             case 0:
               categoria = "Paleta";
+
               break;
             case 1:
               categoria = "Helado";
@@ -1216,11 +707,146 @@ class _NuevaOrdenState extends State<NuevaOrden> {
               categoria = "Bolis";
               break;
             case 4:
+              categoria = "Bolito";
+              break;
+            case 5:
               categoria = "Troles";
               break;
           }
         },
       ),
     );
+  }
+
+  _pickFlavor() {
+    return Container(
+        margin: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            color: colorPrincipal,
+            borderRadius: BorderRadius.all(Radius.circular(25))),
+        height: MediaQuery.of(context).size.height * 0.09,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              "Sabor: ",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('Sabores')
+                      .where('Categorias',
+                          arrayContainsAny: [categoria]).snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData)
+                      const Text("Loading.....");
+                    else {
+                      List<DropdownMenuItem> currencyItems = [];
+                      mapProductos.clear();
+                      for (int i = 0; i < snapshot.data.docs.length; i++) {
+                        DocumentSnapshot snap = snapshot.data.docs[i];
+                        mapProductos.addAll({snap.id: snap['Materia']});
+
+                        currencyItems.add(
+                          DropdownMenuItem(
+                            child: Text(
+                              "${snap.id}",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            value: "${snap.id}",
+                          ),
+                        );
+                      }
+
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          DropdownButton(
+                            items: currencyItems,
+                            onChanged: (currencyValue) {
+                              final snackBar = SnackBar(
+                                backgroundColor: colorPrincipal,
+                                content: Text(
+                                  'Producto: $currencyValue',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              );
+                              // ignore: deprecated_member_use
+                              Scaffold.of(context)
+                                  // ignore: deprecated_member_use
+                                  .showSnackBar(snackBar);
+
+                              setState(() {
+                                selectedCurrency1 = currencyValue;
+                                productos.add(_getFlavorMap());
+
+                                print(productos);
+                              });
+                            },
+                            value: selectedCurrency1,
+                            isExpanded: false,
+                            hint: new Text(
+                              "Nombre: ",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            dropdownColor: colorPrincipal,
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.white,
+                              size: 22.0,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return LinearProgressIndicator();
+                  }),
+            )
+          ],
+        ));
+  }
+
+  Map<String, dynamic> _getFlavorMap() {
+    if (categoria == 'Paleta') {
+      return mapProductos[selectedCurrency1] == 'Agua'
+          ? {
+              selectedCurrency1.toString(): {
+                'Cuadraleta': 0,
+                'Hexagonal': 0,
+                'Mini': 0,
+                'Maxi': 0,
+                'Materia': mapProductos[selectedCurrency1],
+                'tambos': 0
+              }
+            }
+          : {
+              selectedCurrency1.toString(): {
+                'Cuadraleta': 0,
+                'Hexagonal': 0,
+                'Mini': 0,
+                'Materia': mapProductos[selectedCurrency1],
+                'tambos': 0
+              }
+            };
+      ;
+    } else if (categoria == 'Helado') {
+      return {selectedCurrency1.toString(): {}};
+    } else if (categoria == 'Sandwich') {
+      return {selectedCurrency1.toString(): {}};
+    } else if (categoria == 'Bolis') {
+      return {selectedCurrency1.toString(): {}};
+    } else if (categoria == 'Bolito') {
+      return {selectedCurrency1.toString(): {}};
+    } else if (categoria == 'Troles') {
+      return {selectedCurrency1.toString(): {}};
+    }
+    return {};
   }
 }
