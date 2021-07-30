@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:paleteria_marfel/Graficas/Produccion.dart';
 import 'package:paleteria_marfel/Login/Login.dart';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
@@ -33,7 +34,7 @@ bool icono = false;
 String categoria;
 String materia;
 bool prodPart = false;
-List<Map<String, dynamic>> productos = [];
+Map<String, dynamic> productos = {};
 String numeroTambos;
 Map<String, dynamic> mapProductos = {};
 
@@ -90,7 +91,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                               ? SizedBox()
                               : Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.55,
+                                      MediaQuery.of(context).size.height * 0.53,
                                   margin: EdgeInsets.only(left: 20, right: 20),
                                   child: ListView(
                                     children: [
@@ -118,7 +119,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                                                 icon: Icon(Icons.delete,
                                                     color: Colors.red.shade700),
                                                 label: Text(
-                                                  "Borrar 1",
+                                                  "Borrar",
                                                   style: TextStyle(
                                                       color: Colors.black,
                                                       fontSize: 15,
@@ -128,52 +129,8 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                                           ],
                                         ),
                                       ),
-                                      for (int i = 0; i < productos.length; i++)
-                                        Container(
-                                          margin: EdgeInsets.all(10),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .8,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .05,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: colorPrincipal,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.all(10),
-                                                child: Text(
-                                                  productos[i]
-                                                      .keys
-                                                      .toString()
-                                                      .replaceAll(")", "")
-                                                      .replaceAll("(", ""),
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                              Container(
-                                                child: Text(mapProductos[
-                                                        productos[i]
-                                                            .keys
-                                                            .toString()
-                                                            .replaceAll(")", "")
-                                                            .replaceAll(
-                                                                "(", "")]
-                                                    .toString()),
-                                              )
-                                            ],
-                                          ),
-                                        )
+                                      for (var i in productos.keys)
+                                        _moldesCard(context, i),
                                     ],
                                   ),
                                 ),
@@ -181,6 +138,15 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                       )
                     : Column(
                         children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height * .7,
+                            child: ListView(
+                              children: [
+                                for (var i in productos.keys)
+                                  _moldesCard(context, i),
+                              ],
+                            ),
+                          ),
                           FlatButton.icon(
                             icon: Icon(Icons.check),
                             label: Text(
@@ -191,10 +157,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                                   fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
-                              if (categoria == "Troles") {
-                                subirTroll();
-                                buildAlert(context);
-                              }
+                              subirProduccion();
                             },
                           )
                         ],
@@ -240,32 +203,131 @@ class _NuevaOrdenState extends State<NuevaOrden> {
               ));
   }
 
-  _buildTextField(
-      IconData icon, String labelText, TextEditingController controllerPr) {
+  Container _moldesCard(BuildContext context, String key) {
+    String nombre = key;
+    String tipo = mapProductos[nombre];
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-          color: Colors.white, border: Border.all(color: colorPrincipal)),
-      child: TextField(
-        controller: controllerPr,
-        keyboardType: TextInputType.number,
-        style: TextStyle(color: Colors.black),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-          labelText: labelText,
-          border: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          disabledBorder: InputBorder.none,
-          labelStyle: TextStyle(color: colorPrincipal),
-          icon: Icon(icon, color: colorPrincipal),
+        margin: EdgeInsets.all(10),
+        width: MediaQuery.of(context).size.width * .8,
+        height: MediaQuery.of(context).size.height * .07,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: colorPrincipal,
         ),
-      ),
-    );
+        child: categoria == 'Paleta'
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _cardInfo(
+                    'Tambos',
+                    nombre,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * .2,
+                    child: Text(
+                      nombre,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  _cardInfo(
+                    'Mini',
+                    nombre,
+                  ),
+                  _cardInfo(
+                    'Cuadraleta',
+                    nombre,
+                  ),
+                  _cardInfo(
+                    'Hexagonal',
+                    nombre,
+                  ),
+                  tipo == 'Agua'
+                      ? _cardInfo(
+                          'Maxi',
+                          nombre,
+                        )
+                      : Container()
+                ],
+              )
+            : categoria == 'Helado'
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _cardInfo(
+                        'Tandas',
+                        nombre,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * .2,
+                        child: Text(
+                          nombre,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      tipo == 'Agua'
+                          ? _cardInfo(
+                              'Helado 5L Agua',
+                              nombre,
+                            )
+                          : _cardInfo(
+                              'Helado 5L Leche',
+                              nombre,
+                            ),
+                      tipo == 'Agua'
+                          ? _cardInfo(
+                              'Helado 1L Agua',
+                              nombre,
+                            )
+                          : _cardInfo(
+                              'Helado 1L Leche',
+                              nombre,
+                            )
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _cardInfo(
+                        'Tambos',
+                        nombre,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * .2,
+                        child: Text(
+                          nombre,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .25,
+                      ),
+                      _cardInfo(
+                        'Piezas',
+                        nombre,
+                      )
+                    ],
+                  ));
   }
 
-  subirPaletaAgua() {
+  subirProduccion() {
+    String medida = '';
+    if (categoria == 'Helado') {
+      medida = 'Tandas';
+    } else {
+      medida = 'Tambos';
+    }
     String turno = "";
     if (_currentSliderValue == 0) {
       turno = "Dia";
@@ -273,19 +335,13 @@ class _NuevaOrdenState extends State<NuevaOrden> {
       turno = "Noche";
     }
     FirebaseFirestore.instance.collection("Produccion").add({
-      "Sabor": productos,
-      "Date": DateTime.now(),
+      "Sabores": productos,
       "Dia": DateTime.now().day,
       "Mes": DateTime.now().month,
       "Año": DateTime.now().year,
-      "Materia": materia,
       "Categoria": categoria,
-      "Tambo": double.parse(numeroTambos),
-      "Maxi": double.parse(_maxiController.text),
-      "Hexagonal": double.parse(_hexaController.text),
-      "Cuadraleta": double.parse(_cuadController.text),
       "Turno": turno,
-      "Medida": "Tambos"
+      "Medida": medida
     }).then((value) => {
           setState(() {
             prodPart = true;
@@ -294,164 +350,6 @@ class _NuevaOrdenState extends State<NuevaOrden> {
             _cuadController.text = "";
             _fiveLController.text = "";
             _oneLController.text = "";
-            productos.clear();
-            selectedCurrency1 = null;
-            prodPart = false;
-            icono = null;
-            materia = null;
-            categoria = null;
-            drop2 = null;
-            drop1 = null;
-          })
-        });
-  }
-
-  subirPaletaLeche() {
-    String turno = "";
-    if (_currentSliderValue == 0) {
-      turno = "Dia";
-    } else {
-      turno = "Noche";
-    }
-    FirebaseFirestore.instance.collection("Produccion").add({
-      "Sabor": productos,
-      "Dia": DateTime.now().day,
-      "Mes": DateTime.now().month,
-      "Año": DateTime.now().year,
-      "Materia": materia,
-      "Categoria": categoria,
-      "Tambo": double.parse(numeroTambos),
-      "Hexagonal": double.parse(_hexaController.text),
-      "Cuadraleta": double.parse(_cuadController.text),
-      "Turno": turno,
-      "Medida": "Tambos"
-    }).then((value) => {
-          setState(() {
-            prodPart = true;
-            _maxiController.text = "";
-            _hexaController.text = "";
-            _cuadController.text = "";
-            _fiveLController.text = "";
-            _oneLController.text = "";
-            productos.clear();
-            selectedCurrency1 = null;
-            prodPart = false;
-            icono = null;
-            materia = null;
-            categoria = null;
-            drop2 = null;
-            drop1 = null;
-          })
-        });
-  }
-
-  subirHelado() {
-    String turno = "";
-    if (_currentSliderValue == 0) {
-      turno = "Dia";
-    } else {
-      turno = "Noche";
-    }
-    FirebaseFirestore.instance.collection("Produccion").add({
-      "Sabor": productos,
-      "Dia": DateTime.now().day,
-      "Mes": DateTime.now().month,
-      "Año": DateTime.now().year,
-      "Materia": materia,
-      "Categoria": categoria,
-      "Tanda": double.parse(numeroTambos),
-      "5L": double.parse(_fiveLController.text),
-      "1L": double.parse(_oneLController.text),
-      "Turno": turno,
-      "Medida": "Tandas"
-    }).then((value) => {
-          setState(() {
-            prodPart = true;
-            _maxiController.text = "";
-            _hexaController.text = "";
-            _cuadController.text = "";
-            _fiveLController.text = "";
-            _oneLController.text = "";
-            productos.clear();
-            selectedCurrency1 = null;
-            prodPart = false;
-            icono = null;
-            materia = null;
-            categoria = null;
-            drop2 = null;
-            drop1 = null;
-          })
-        });
-  }
-
-  subirSandwich() {
-    String turno = "";
-    if (_currentSliderValue == 0) {
-      turno = "Dia";
-    } else {
-      turno = "Noche";
-    }
-    FirebaseFirestore.instance.collection("Produccion").add({
-      "Sabor": productos,
-      "Dia": DateTime.now().day,
-      "Mes": DateTime.now().month,
-      "Año": DateTime.now().year,
-      "Materia": materia,
-      "Categoria": categoria,
-      "Tambo": double.parse(numeroTambos),
-      "Piezas": double.parse(_piezasController.text),
-      "Turno": turno,
-      "Medida": "Tambos"
-    }).then((value) => {
-          setState(() {
-            prodPart = true;
-            _maxiController.text = "";
-            _hexaController.text = "";
-            _cuadController.text = "";
-            _fiveLController.text = "";
-            _oneLController.text = "";
-            _piezasController.text = "";
-            productos.clear();
-            selectedCurrency1 = null;
-            prodPart = false;
-            icono = null;
-            materia = null;
-            categoria = null;
-            drop2 = null;
-            drop1 = null;
-          })
-        });
-  }
-
-  subirBolis() {}
-
-  subirTroll() {
-    String turno = "";
-    if (_currentSliderValue == 0) {
-      turno = "Dia";
-    } else {
-      turno = "Noche";
-    }
-    FirebaseFirestore.instance.collection("Produccion").add({
-      "Sabor": productos,
-      "Dia": DateTime.now().day,
-      "Mes": DateTime.now().month,
-      "Año": DateTime.now().year,
-      "Materia": materia,
-      "Categoria": categoria,
-      "Tambo": numeroTambos,
-      "Piezas": double.parse(_piezasController.text),
-      "Turno": turno,
-      "Medida": "Tambos"
-    }).then((value) => {
-          setState(() {
-            prodPart = true;
-            _maxiController.text = "";
-            _hexaController.text = "";
-            _cuadController.text = "";
-            _fiveLController.text = "";
-            _oneLController.text = "";
-            _piezasController.text = "";
             productos.clear();
             selectedCurrency1 = null;
             prodPart = false;
@@ -465,34 +363,6 @@ class _NuevaOrdenState extends State<NuevaOrden> {
   }
 
   ButtonState stateTextWithIcon = ButtonState.idle;
-
-  Widget buildTextWithIcon() {
-    return ProgressButton.icon(
-      iconedButtons: {
-        ButtonState.idle: IconedButton(
-            text: "Aceptar",
-            icon: Icon(Icons.send, color: Colors.white),
-            color: colorPrincipal),
-        ButtonState.loading: IconedButton(
-            text: "Enviando...", color: Colors.deepPurple.shade700),
-        ButtonState.fail: IconedButton(
-            text: "Orden incorrecta",
-            icon: Icon(Icons.cancel, color: Colors.white),
-            color: Colors.red.shade300),
-        ButtonState.success: IconedButton(
-            text: "Enviado",
-            icon: Icon(
-              Icons.check_circle,
-              color: Colors.white,
-            ),
-            color: Colors.green.shade400)
-      },
-      onPressed: () {
-        print("object");
-      },
-      state: stateTextWithIcon,
-    );
-  }
 
   buildAlert(BuildContext context) {
     YudizModalSheet.show(
@@ -695,7 +565,6 @@ class _NuevaOrdenState extends State<NuevaOrden> {
           switch (drop1) {
             case 0:
               categoria = "Paleta";
-
               break;
             case 1:
               categoria = "Helado";
@@ -785,9 +654,8 @@ class _NuevaOrdenState extends State<NuevaOrden> {
 
                               setState(() {
                                 selectedCurrency1 = currencyValue;
-                                productos.add(_getFlavorMap());
-
-                                print(productos);
+                                if (!productos.containsKey(selectedCurrency1))
+                                  productos.addAll(_getFlavorMap());
                               });
                             },
                             value: selectedCurrency1,
@@ -818,35 +686,88 @@ class _NuevaOrdenState extends State<NuevaOrden> {
       return mapProductos[selectedCurrency1] == 'Agua'
           ? {
               selectedCurrency1.toString(): {
+                'Materia': mapProductos[selectedCurrency1],
                 'Cuadraleta': 0,
                 'Hexagonal': 0,
                 'Mini': 0,
                 'Maxi': 0,
-                'Materia': mapProductos[selectedCurrency1],
-                'tambos': 0
+                'Tambos': 0
               }
             }
           : {
               selectedCurrency1.toString(): {
+                'Materia': mapProductos[selectedCurrency1],
                 'Cuadraleta': 0,
                 'Hexagonal': 0,
                 'Mini': 0,
-                'Materia': mapProductos[selectedCurrency1],
-                'tambos': 0
+                'Tambos': 0
               }
             };
-      ;
     } else if (categoria == 'Helado') {
-      return {selectedCurrency1.toString(): {}};
-    } else if (categoria == 'Sandwich') {
-      return {selectedCurrency1.toString(): {}};
-    } else if (categoria == 'Bolis') {
-      return {selectedCurrency1.toString(): {}};
-    } else if (categoria == 'Bolito') {
-      return {selectedCurrency1.toString(): {}};
-    } else if (categoria == 'Troles') {
-      return {selectedCurrency1.toString(): {}};
+      return mapProductos[selectedCurrency1] == 'Agua'
+          ? {
+              selectedCurrency1.toString(): {
+                'Materia': mapProductos[selectedCurrency1],
+                'Helado 5L Agua': 0,
+                'Helado 1L Agua': 0,
+                'Tandas': 0
+              }
+            }
+          : {
+              selectedCurrency1.toString(): {
+                'Materia': mapProductos[selectedCurrency1],
+                'Helado 5L Leche': 0,
+                'Helado 1L Leche': 0,
+                'Tandas': 0
+              }
+            };
+    } else {
+      return {
+        selectedCurrency1.toString(): {
+          'Materia': mapProductos[selectedCurrency1],
+          'Piezas': 0,
+          'Tambos': 0
+        }
+      };
     }
-    return {};
+  }
+
+  Widget _cardInfo(String medida, String nombre) {
+    return InkWell(
+      onTap: () {
+        productos.forEach((key, value) {
+          print(key);
+        });
+        setState(() {
+          productos[nombre][medida]++;
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.only(left: 5, bottom: 10, top: 10, right: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              medida == 'Piezas'
+                  ? medida
+                  : medida.length > 10
+                      ? medida.substring(6, 9)
+                      : medida.length >= 4
+                          ? medida.substring(0, 4)
+                          : medida,
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              color: Colors.deepPurple,
+              alignment: Alignment.center,
+              child: Text(productos[nombre][medida].toString()),
+              width: MediaQuery.of(context).size.width * .05,
+              height: MediaQuery.of(context).size.width * .05,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

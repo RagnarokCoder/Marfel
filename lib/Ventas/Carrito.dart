@@ -12,11 +12,21 @@ class Orden extends StatefulWidget {
   _OrdenState createState() => _OrdenState();
 }
 
+double total;
+
 class _OrdenState extends State<Orden> {
   _OrdenState();
 
   List carrito = [];
   Color colorButton = colorPrincipal;
+
+  get getTotal {
+    total = 0;
+    for (var i in carrito) {
+      total += i['price'] * i['count'];
+    }
+    return total;
+  }
 
   @override
   void initState() {
@@ -26,7 +36,6 @@ class _OrdenState extends State<Orden> {
 
   @override
   Widget build(BuildContext context) {
-    int total = 0;
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Column(
@@ -58,12 +67,15 @@ class _OrdenState extends State<Orden> {
           child: ListView.builder(
             itemCount: carrito.length,
             itemBuilder: (BuildContext context, int index) {
-              total += (carrito[index]['price']) * carrito[index]['count'];
-
               return _CardOrden(
                   delete: () {
                     setState(() {
                       delete(carrito[index]['molde'], carrito[index]['nombre']);
+                    });
+                  },
+                  state: () {
+                    setState(() {
+                      total = getTotal;
                     });
                   },
                   max: carrito[index]['max'],
@@ -88,7 +100,7 @@ class _OrdenState extends State<Orden> {
                 width: width * .01,
               ),
               Text(
-                '\$$total',
+                '\$$getTotal',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Spacer(),
@@ -176,9 +188,11 @@ class _CardOrden extends StatelessWidget {
       @required this.name,
       @required this.price,
       @required this.molde,
-      @required this.max})
+      @required this.max,
+      this.state})
       : super(key: key);
   final Function delete;
+  final Function state;
   final int price;
   final int counter;
   final int max;
@@ -198,8 +212,14 @@ class _CardOrden extends StatelessWidget {
         CounterView(
           initNumber: counter,
           minNumber: 1,
-          decreaseCallback: () => change(false),
-          increaseCallback: () => change(true),
+          decreaseCallback: () {
+            change(false);
+            state();
+          },
+          increaseCallback: () {
+            change(true);
+            state();
+          },
           maxNumber: max,
         ),
         Container(
@@ -225,8 +245,14 @@ class _CardOrden extends StatelessWidget {
     int index = carrito.indexWhere((element) =>
         element.containsValue(name) && element.containsValue(molde));
     carrito = json.decode(prefs.getString('carrito'));
-    if (choice) carrito[index]['count']++;
-    if (!choice) carrito[index]['count']--;
+    if (choice) {
+      carrito[index]['count']++;
+    }
+
+    if (!choice) {
+      carrito[index]['count']--;
+    }
+
     var carEncode = json.encode(carrito);
     prefs.setString('carrito', carEncode);
   }
