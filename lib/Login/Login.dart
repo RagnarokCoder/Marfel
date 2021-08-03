@@ -13,7 +13,7 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
-Color colorPrincipal = HexColor("#80DEEA");
+Color colorPrincipal = HexColor("#3C9CA8");
 final _usuarioController = TextEditingController();
 final _passwordController = TextEditingController();
 bool contraVal=true;
@@ -29,28 +29,29 @@ class _LoginState extends State<Login> {
          children: [
           Container(
             color: colorPrincipal,
-            height: MediaQuery.of(context).size.height*0.3,
+            height: MediaQuery.of(context).size.height*0.4,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  width:MediaQuery.of(context).size.width*0.4,
-                  height:MediaQuery.of(context).size.height*0.20,
+                  width:MediaQuery.of(context).size.width*0.8,
+                  height:MediaQuery.of(context).size.height*0.35,
                   decoration:BoxDecoration(
                     
                     image:DecorationImage(
-                      image: AssetImage('assets/icono_provisional.png'), fit: BoxFit.fill
+                      image: AssetImage('assets/marfelLogoProtbl.png'), fit: BoxFit.fill
                     ),
                   
                   )
                   ),
-                  Text("BIENVENIDO",
+                  Text("Inicio De Sesión",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold
                   ),
-                  )
+                  ),
+                  
               ],
             ),
           ),
@@ -82,20 +83,93 @@ class _LoginState extends State<Login> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Usuario", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                  
                   Container(
                     height: MediaQuery.of(context).size.height*0.08,
-                    color: Colors.red,
+                    width: MediaQuery.of(context).size.width*0.8,                    
+                    color: Colors.white,
                     margin: EdgeInsets.all(15),
-                    child: _buildTextField( Icons.person,"", _usuarioController),
-                  ),
-                  Text("Contraseña", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                    child: TextField(
+                      controller: _usuarioController,
+            style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.white,
+            ),
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+                prefixIcon: Container(
+            decoration: BoxDecoration(
+              color: colorPrincipal,
+              shape: BoxShape.circle,
+              border: Border.all(color: colorPrincipal)
+            ),
+            child: Icon(Icons.person, color: Colors.white,),
+          ),
+                hintText: "    Usuario",
+                hintStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal
+                ),
+                 enabledBorder:  OutlineInputBorder(
+      borderSide:  BorderSide(color: colorPrincipal, width: 1.0, ),
+      borderRadius: BorderRadius.circular(25.0),
+    ),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: colorPrincipal, width: 32.0),
+                    borderRadius: BorderRadius.circular(25.0)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: colorPrincipal, width: 32.0),
+                    borderRadius: BorderRadius.circular(25.0)))),
+      ),
+                  //Contraseña
                   Container(
                     height: MediaQuery.of(context).size.height*0.08,
-                    color: Colors.red,
+                    width: MediaQuery.of(context).size.width*0.8,                    
+                    color: Colors.white,
                     margin: EdgeInsets.all(15),
-                    child: _buildTextFieldContr( Icons.lock,"", _passwordController),
-                  ),
+                    child: TextField(
+                      obscureText: contraVal,
+                      controller: _passwordController,
+            style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.white,
+            ),
+            decoration: InputDecoration(
+              suffixIcon: IconButton(
+            onPressed: (){
+              setState(() {
+                contraVal = !contraVal;
+              });
+            },
+            icon: Icon(contraVal == true ?Icons.remove_red_eye: Icons.close, color: Colors.white,),
+          ),
+                contentPadding: EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+                prefixIcon: Container(
+            decoration: BoxDecoration(
+              color: colorPrincipal,
+              shape: BoxShape.circle,
+              border: Border.all(color: colorPrincipal)
+            ),
+            child: Icon(Icons.lock, color: Colors.white,),
+          ),
+                hintText: "    Contraseña",
+                hintStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal
+                ),
+                 enabledBorder:  OutlineInputBorder(
+      borderSide:  BorderSide(color: colorPrincipal, width: 1.0, ),
+      borderRadius: BorderRadius.circular(25.0),
+    ),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: colorPrincipal, width: 32.0),
+                    borderRadius: BorderRadius.circular(25.0)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: colorPrincipal, width: 32.0),
+                    borderRadius: BorderRadius.circular(25.0)))),
+      ),
                 ],
               ),
             ),
@@ -129,70 +203,8 @@ class _LoginState extends State<Login> {
        )
     );
   }
-  _buildTextField( IconData icon, String labelText, TextEditingController controllerPr)
-  {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: colorPrincipal)
-      ),
-      child: TextField(
-
-        controller: controllerPr,
-        style: TextStyle(color: Colors.black),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-          labelText: labelText,
-          border: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-          labelStyle: TextStyle(color: colorPrincipal),
-          icon: Icon(icon, color: colorPrincipal),
-          
-        ),
-      ),
-    );
-  }
-  _buildTextFieldContr( IconData icon, String labelText, TextEditingController controllerPr)
-  {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: colorPrincipal)
-      ),
-      child: TextField(
-        obscureText: contraVal,
-        controller: controllerPr,
-        style: TextStyle(color: Colors.black),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-          labelText: labelText,
-          
-          border: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-          labelStyle: TextStyle(color: colorPrincipal),
-          icon: Icon(icon, color: colorPrincipal),
-          
-          suffixIcon: IconButton(
-            onPressed: (){
-              setState(() {
-                contraVal = !contraVal;
-              });
-            },
-            icon: Icon(contraVal == true ?Icons.remove_red_eye: Icons.close, color: colorPrincipal,),
-          )
-          
-        ),
-      ),
-    );
-  }
+  
+  
   void validarLogin()
   {
 

@@ -41,16 +41,20 @@ dependencies:
   fl_chart:
   progress_state_button:  
   flutter_datetime_picker:
-  numberpicker:
+  
   provider:
   slide_to_confirm:
   icon_badge:
   firebase_auth: ^0.20.1
 
+  shared_preferences:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.1
+
+dependency_overrides:
+   intl: ^0.17.0-nullsafety.2
 
 dev_dependencies:
   flutter_test:

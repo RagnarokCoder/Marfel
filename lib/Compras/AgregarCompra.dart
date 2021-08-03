@@ -221,6 +221,7 @@ class _AgregarCompraState extends State<AgregarCompra> {
                        "Pendiente": true,
                        "Usuario": widget.usuario
                        
+                       
                      }).then((value) => {
                         buildAlertCorrecto(context),
                         _productoController.text="",
