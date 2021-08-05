@@ -17,7 +17,7 @@ class VistaInventario extends StatefulWidget {
 }
 
 bool icono = false;
-Color colorPrincipal = HexColor("#80DEEA");
+Color colorPrincipal = HexColor("#3C9CA8");
 final _nombreController = TextEditingController();
 final _precioMenudeoController = TextEditingController();
 final _precioMayoreoController = TextEditingController();

@@ -250,6 +250,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_zoom_drawer:
+    dependency: "direct main"
+    description:
+      name: flutter_zoom_drawer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
   font_awesome_flutter:
     dependency: "direct main"
     description:
@@ -313,6 +320,13 @@ packages:
     dependency: transitive
     description:
       name: logging
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  marquee_widget:
+    dependency: "direct main"
+    description:
+      name: marquee_widget
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"

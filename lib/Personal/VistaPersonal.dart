@@ -19,7 +19,7 @@ class VistaPersonal extends StatefulWidget {
   _VistaPersonalState createState() => _VistaPersonalState();
 }
 int laboral = 0;
-Color colorPrincipal = HexColor("#80DEEA");
+Color colorPrincipal = HexColor("#3C9CA8");
 final _nombreController = TextEditingController();
 final _apellidoController = TextEditingController();
 final _emailController = TextEditingController();

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:paleteria_marfel/Clientes/VistaClientes.dart';
-import 'package:paleteria_marfel/Login/Login.dart';
+import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 
@@ -13,9 +13,9 @@ class DetallesClientes extends StatefulWidget {
   final String nombre;
   final String correo, telefono, direccion, id;
   final dynamic descuento;
-
+  final String usuario;
   
-  DetallesClientes({Key key, this.nombre, this.correo, this.telefono, this.direccion, this.descuento,  this.id}) : super(key: key);
+  DetallesClientes({Key key, this.nombre, this.correo, this.telefono, this.direccion, this.descuento,  this.id, this.usuario}) : super(key: key);
   
   @override
   _DetallesClientesState createState() => _DetallesClientesState();
@@ -33,6 +33,7 @@ String diferido;
 dynamic totalabono = 0;
 dynamic restante=0;
 bool open=false, open1=false;
+Color colorPrincipal = HexColor("#3C9CA8");
 
 class _DetallesClientesState extends State<DetallesClientes> {
   
@@ -87,7 +88,7 @@ class _DetallesClientesState extends State<DetallesClientes> {
                icon: Icon(Icons.arrow_back, color: Colors.white,), 
              onPressed: (){
                Navigator.push(context, PageTransition(type: PageTransitionType.leftToRight, child: VistaClientes(
-                                                        
+                                                        usuario: widget.usuario,
                                                       )));
              }
              ),

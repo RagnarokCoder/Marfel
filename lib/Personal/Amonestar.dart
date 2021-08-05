@@ -15,7 +15,7 @@ class Amonestar extends StatefulWidget {
   _AmonestarState createState() => _AmonestarState();
 }
 
-Color colorPrincipal = HexColor("#80DEEA");
+Color colorPrincipal = HexColor("#3C9CA8");
 int  _checkboxValue1;
 String user="...";
 var selectedCurrency1;

@@ -41,11 +41,12 @@ dependencies:
   fl_chart:
   progress_state_button:  
   flutter_datetime_picker:
-  
+  flutter_zoom_drawer:
   provider:
   slide_to_confirm:
   icon_badge:
   firebase_auth: ^0.20.1
+  marquee_widget:
 
   shared_preferences:
 

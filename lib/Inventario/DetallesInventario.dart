@@ -100,7 +100,7 @@ class _DetallesInventarioState extends State<DetallesInventario> {
                       final DocumentSnapshot doc = snapshot.data.docs[index];
                       return Container(
                           padding: EdgeInsets.only(left: 10, right: 10),
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          height: MediaQuery.of(context).size.height * 0.2,
                           width: MediaQuery.of(context).size.width * 0.5,
                           decoration: BoxDecoration(
                             boxShadow: [
@@ -115,17 +115,8 @@ class _DetallesInventarioState extends State<DetallesInventario> {
                             color: Colors.white,
                           ),
                           child: Column(children: [
-                            Text(
-                              "${doc.data()['NombreProducto']}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: Image.network("${doc.data()['Imagen']}"),
-                            ),
+                            
+                            
                             Column(
                               children: [
                                 Text(

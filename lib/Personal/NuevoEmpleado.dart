@@ -25,7 +25,7 @@ final _puestoController = TextEditingController();
 final _emailController = TextEditingController();
 final _passwordController = TextEditingController();
 final _telfonoController = TextEditingController();
-Color colorPrincipal = HexColor("#80DEEA");
+Color colorPrincipal = HexColor("#3C9CA8");
 int puesto = 0;
 String puestoSelect;
 

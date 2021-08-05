@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:paleteria_marfel/Clientes/DetallesClientes.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
+import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 class VistaClientes extends StatefulWidget {
@@ -24,7 +25,7 @@ final _correoController = TextEditingController();
 final _buscadorController = TextEditingController();
 
 int descuento = 0;
-
+Color colorPrincipal = HexColor("#3C9CA8");
 
 class _VistaClientesState extends State<VistaClientes> {
 
@@ -153,7 +154,8 @@ List filteredClientes = [];
                                   child: ExpansionTileCard(
                                     baseColor: Colors.white,
                                     shadowColor: Colors.white,
-                                    elevation: 5,
+                                    
+                                    elevation: 15,
                                     leading: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -297,6 +299,7 @@ List filteredClientes = [];
                                                         direccion: filteredClientes[index]['Direccion'],
                                                         descuento: filteredClientes[index]['Descuento'],
                                                         id: filteredClientes[index]['id'],
+                                                        usuario: widget.usuario,
                                                       )));
                                                     },
                                                     label: Text(

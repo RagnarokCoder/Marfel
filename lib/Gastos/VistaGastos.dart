@@ -17,7 +17,7 @@ class VistaGastos extends StatefulWidget {
   _VistaGastosState createState() => _VistaGastosState();
 }
 
-Color colorPrincipal = HexColor("#80DEEA");
+Color colorPrincipal = HexColor("#3C9CA8");
 bool icono = false;
 NumberFormat f = new NumberFormat("#,##0.00", "es_US");
 final _nombreController = TextEditingController();
@@ -33,11 +33,7 @@ class _VistaGastosState extends State<VistaGastos> {
   
 
 
-  @override
-  void initState() {
-    
-    super.initState();
-  }
+ 
 
   @override
   Widget build(BuildContext context) {

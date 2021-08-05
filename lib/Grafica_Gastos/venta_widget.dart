@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'details_page.dart';
 import 'package:intl/intl.dart';
-import 'Grafica_Pie.dart';
-import 'graph_widget.dart';
+import 'package:paleteria_marfel/Grafica_Gastos/Grafica_Pie.dart';
+import 'package:paleteria_marfel/Grafica_Gastos/details_page.dart';
+import 'package:paleteria_marfel/Grafica_Gastos/graph_widget.dart';
+
 
 enum GraphType {
   LINES, PIE,
@@ -13,7 +14,7 @@ enum GraphType {
 
 
 
-class VentaWidget extends StatefulWidget {
+class GastoWidget extends StatefulWidget {
 
  final List<DocumentSnapshot> documents;
  final dynamic total;
@@ -24,14 +25,14 @@ class VentaWidget extends StatefulWidget {
  
  
 
-   VentaWidget({Key key,@required this.month, this.graphType,this.documents}) : 
-    total = documents.map((doc) => doc.data()['Total'])
+   GastoWidget({Key key,@required this.month, this.graphType,this.documents}) : 
+    total = documents.map((doc) => doc.data()['Cantidad'])
             .fold(0.0, (a, b) => a + b),
      
      
      perDay = List.generate(30, (int index){
        return documents.where((doc) => doc.data()['Dia'] ==(index + 1))
-        .map((doc) => doc.data()['Total'])
+        .map((doc) => doc.data()['Cantidad'])
             .fold(0.0, (a, b) => a + b);
      }),       
 
@@ -41,7 +42,7 @@ class VentaWidget extends StatefulWidget {
           map[document.data()['Nombre']] = 0.0;
         }
 
-        map[document.data()['Nombre']] += document.data()['Total'];
+        map[document.data()['Nombre']] += document.data()['Cantidad'];
         return map;
 
       }),
@@ -49,10 +50,10 @@ class VentaWidget extends StatefulWidget {
     super(key: key);
 
   @override
-  _VentaWidgetState createState() => _VentaWidgetState();
+  _GastoWidgetState createState() => _GastoWidgetState();
 }
 
-class _VentaWidgetState extends State<VentaWidget> {
+class _GastoWidgetState extends State<GastoWidget> {
 
    
   
@@ -108,7 +109,7 @@ class _VentaWidgetState extends State<VentaWidget> {
     if (widget.graphType == GraphType.LINES) {
       return Container(
         height: 200.0,
-        child: GraphWidget(
+        child: GraphWidget2(
           data: widget.perDay,
         ),
       );
@@ -118,7 +119,7 @@ class _VentaWidgetState extends State<VentaWidget> {
       var perCategory = widget.categories.keys.map((name) => widget.categories[name] / widget.total).toList();
       return Container(
         height: 250.0,
-        child: PieGraphWidget(
+        child: PieGraphWidget1(
           data: perCategory,
         ),
       );
@@ -134,7 +135,7 @@ class _VentaWidgetState extends State<VentaWidget> {
 
       
       Navigator.of(context).pushNamed('/details',
-           arguments: DetailsPage1(nombre, widget.month));
+           arguments: DetailsPage2(nombre, widget.month));
       },
 
       leading: Icon(icon, size: 24.0,color: Colors.blueAccent[200],),
@@ -145,7 +146,7 @@ class _VentaWidgetState extends State<VentaWidget> {
           fontSize: 18.0 
         ),
       ),
-      subtitle: Text("$percent% de Ventas",
+      subtitle: Text("$percent% de Gastos",
         style: TextStyle(
           fontSize: 16.0,
           color:Colors.black.withOpacity(0.45)

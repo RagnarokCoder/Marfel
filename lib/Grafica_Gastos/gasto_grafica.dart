@@ -8,16 +8,16 @@ import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'venta_widget.dart';
 
 // ignore: camel_case_types
-class venta_gastos extends StatefulWidget {
+class GraficaGastos extends StatefulWidget {
  
   
 
   @override
-  _venta_gastosState createState() => _venta_gastosState();
+  _GraficaGastosState createState() => _GraficaGastosState();
 }
 
 // ignore: camel_case_types
-class _venta_gastosState extends State<venta_gastos> {
+class _GraficaGastosState extends State<GraficaGastos> {
 
    PageController _controller;
   int currentPage = DateTime.now().month - 1;
@@ -33,7 +33,7 @@ class _venta_gastosState extends State<venta_gastos> {
     // ignore: deprecated_member_use
     _query = FirebaseFirestore.instance
 
-        .collection('Ventas')
+        .collection('Gastos')
         .where("Mes", isEqualTo: currentPage + 1)
         .snapshots();
 
@@ -141,7 +141,7 @@ backgroundColor: Colors.white,
                 
 
                 // ignore: dead_code
-                return VentaWidget(
+                return GastoWidget(
 
                   
                   
@@ -236,12 +236,12 @@ backgroundColor: Colors.white,
         
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-       IconButton(icon: Icon(Icons.arrow_back_ios,color: Colors.white, size: 18), onPressed: (){
+       IconButton(icon: Icon(Icons.arrow_back_ios,color: Colors.white, size: 18,), onPressed: (){
              
     Navigator.of(context).pop();  
 
         }),
-        Text('Grafica De Ventas', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,color: Colors.white),),
+        Text('Grafica De Gastos', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,color: Colors.white),),
         IconButton(icon: Icon(Icons.trending_up,color: Colors.white), onPressed: (){
          
         }),
