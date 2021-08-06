@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
@@ -144,6 +145,7 @@ class _OrdenState extends State<Orden> {
             actions: [
               TextButton(
                   onPressed: () {
+                    _subirVenta();
                     Navigator.of(context).pop();
                   },
                   child: Text('si')),
@@ -178,6 +180,35 @@ class _OrdenState extends State<Orden> {
     var carEncode = json.encode(carrito);
     prefs.setString('carrito', carEncode);
   }
+
+  Future<void> _subirVenta() async {
+    String date = DateTime.now().day.toString() +
+        '/' +
+        DateTime.now().month.toString() +
+        '/' +
+        DateTime.now().year.toString();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    FirebaseFirestore.instance.collection("Ventas").add({
+      "Productos": getCarrito(),
+      "Dia": DateTime.now().day,
+      "Mes": DateTime.now().month,
+      "Año": DateTime.now().year,
+      "Date": DateTime.now(),
+      "FechaVenta": date,
+      "Total": total,
+      "Abonado": 0,
+      "Pendiente": false,
+      "Nombre": 'Juan'
+    }).then((value) => {
+          setState(() {
+            carrito = [];
+
+            prefs.setString('carrito', '[]');
+          })
+        });
+  }
+
+  getCarrito() {}
 }
 
 class _CardOrden extends StatelessWidget {
