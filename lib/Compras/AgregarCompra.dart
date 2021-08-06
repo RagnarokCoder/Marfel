@@ -6,6 +6,8 @@ import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 import 'package:intl/intl.dart';
 
 class AgregarCompra extends StatefulWidget {
+  final String usuario;
+  AgregarCompra({Key key, this.usuario}) : super(key: key);
   @override
   _AgregarCompraState createState() => _AgregarCompraState();
 }
@@ -216,7 +218,9 @@ class _AgregarCompraState extends State<AgregarCompra> {
                        "Mes": DateTime.now().month,
                        "Dia": DateTime.now().day,
                        "Año": DateTime.now().year,
-                       "Pendiente": true
+                       "Pendiente": true,
+                       "Usuario": widget.usuario
+                       
                        
                      }).then((value) => {
                         buildAlertCorrecto(context),

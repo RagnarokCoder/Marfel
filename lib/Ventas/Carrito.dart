@@ -83,7 +83,9 @@ class _OrdenState extends State<Orden> {
                   counter: carrito[index]['count'],
                   name: carrito[index]['nombre'],
                   molde: carrito[index]['molde'],
-                  price: carrito[index]['price']);
+                  price: carrito[index]['price'],
+                  imagen: carrito[index]['img'],
+                  );
             },
           ),
         ),
@@ -220,7 +222,7 @@ class _CardOrden extends StatelessWidget {
       @required this.price,
       @required this.molde,
       @required this.max,
-      this.state})
+      this.state, this.imagen})
       : super(key: key);
   final Function delete;
   final Function state;
@@ -229,6 +231,7 @@ class _CardOrden extends StatelessWidget {
   final int max;
   final String name;
   final String molde;
+  final String imagen;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -237,7 +240,7 @@ class _CardOrden extends StatelessWidget {
       children: [
         Container(
           child: Image(
-              height: height * .06, image: AssetImage('assets/paletaPor.jpg')),
+              height: height * .06, image: NetworkImage(imagen)),
         ),
         Container(width: width * .3, child: Text(molde + ' ' + name)),
         CounterView(

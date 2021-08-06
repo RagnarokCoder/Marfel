@@ -109,7 +109,9 @@ bool isSearching = false;
                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => AgregarCompra()),
+                                          builder: (context) => AgregarCompra(
+                                            usuario: widget.usuario
+                                          )),
                                     );
                   },
                 ),

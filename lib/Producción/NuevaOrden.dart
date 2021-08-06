@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:paleteria_marfel/Graficas/Produccion.dart';
 import 'package:paleteria_marfel/Login/Login.dart';
-import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
@@ -19,7 +17,6 @@ var selectedCurrency;
 final _maxiController = TextEditingController();
 final _cuadController = TextEditingController();
 final _hexaController = TextEditingController();
-final _piezasController = TextEditingController();
 final _fiveLController = TextEditingController();
 final _oneLController = TextEditingController();
 

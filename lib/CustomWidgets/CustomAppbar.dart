@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:paleteria_marfel/Clientes/VistaClientes.dart';
 import 'package:paleteria_marfel/Compras/VistaComprasList.dart';
 import 'package:paleteria_marfel/FirebaseAuth/Authentication_Service.dart';
 import 'package:paleteria_marfel/Gastos/VistaGastos.dart';
-import 'package:paleteria_marfel/Graficas/VistaGraficas.dart';
+import 'package:paleteria_marfel/Graficas/VistaGraficas2.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:paleteria_marfel/Inventario/VistaInventario.dart';
 import 'package:paleteria_marfel/InventarioStock/InventarioMp.dart';
@@ -14,6 +15,7 @@ import 'package:paleteria_marfel/Ventas/VistaVentas.dart';
 import 'package:provider/provider.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
+
 class CustomAppBar extends StatefulWidget {
   final String usuario;
   CustomAppBar({Key key, this.usuario}) : super(key: key);
@@ -22,8 +24,9 @@ class CustomAppBar extends StatefulWidget {
   _CustomAppBarState createState() => _CustomAppBarState();
 }
 
-Color colorPrincipal = HexColor("#80DEEA");
+Color colorPrincipal = HexColor("#3C9CA8");
 int tipoAcceso = 0;
+String user;
 
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
@@ -38,56 +41,84 @@ class _CustomAppBarState extends State<CustomAppBar> {
     if (widget.usuario.toString().toUpperCase() == "ADMIN@MARFEL.COM" ||
         widget.usuario.toString() == "$prefix" + "_admin@marfel.com") {
       tipoAcceso = 1;
+      user = "Admin";
     }
     if (widget.usuario.toString().toUpperCase() == "VENTAS@MARFEL.COM" ||
         widget.usuario.toString() == "$prefix" + "_ventas@marfel.com") {
       tipoAcceso = 2;
+      user = "Ventas";
     }
     if (widget.usuario.toString().toUpperCase() == "INVENTARIO@MARFEL.COM" ||
         widget.usuario.toString() == "$prefix" + "_inventario@marfel.com") {
       tipoAcceso = 3;
+      user = "Inventario";
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      
+        child: ListView(
+      
       children: <Widget>[
         Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.19,
-          padding: EdgeInsets.only(left: 30, right: 30, top: 30),
+          height: MediaQuery.of(context).size.height * 0.38,
+          padding: EdgeInsets.only(left: 5, right: 5),
           color: colorPrincipal,
-          child: Center(
-            child: Column(children: <Widget>[
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
               Container(
-                  width: 150,
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.65,
+                  height: MediaQuery.of(context).size.height * 0.30,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        image: AssetImage('assets/icono_provisional.png'),
+                        image: AssetImage('assets/marfelLogoProtbl.png',
+                        
+                        ),
                         fit: BoxFit.fill),
                   )),
-            ]),
-          ),
+            Container(
+              color: colorPrincipal,
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        height: MediaQuery.of(context).size.height * 0.08,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("${widget.usuario}",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          Text("$user",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          ],
+                        )
+                      )        
+            ],
+          )
         ),
+        
         Container(
             height: MediaQuery.of(context).size.height * 0.81,
             color: colorPrincipal,
             child: Column(children: <Widget>[
               tipoAcceso == 1 || tipoAcceso == 2
                   ? ListTile(
-                      leading: Icon(
-                        Icons.shopping_cart_rounded,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading:  Icon(FontAwesomeIcons.tag, color: Colors.white, size: 20),
                       title: Text('VENTAS',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -103,14 +134,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   : SizedBox(),
               tipoAcceso == 1
                   ? ListTile(
-                      leading: Icon(
-                        Icons.shopping_bag_sharp,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading: Icon(FontAwesomeIcons.shoppingBag, color: Colors.white, size: 20),
                       title: Text('COMPRAS',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -124,39 +151,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       },
                     )
                   : SizedBox(),
-              tipoAcceso == 1 || tipoAcceso == 3
+                  tipoAcceso == 1
                   ? ListTile(
-                      leading: Icon(
-                        Icons.storage_outlined,
-                        size: 25,
-                        color: Colors.white,
-                      ),
-                      title: Text('STOCK',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white)),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            PageTransition(
-                                type: PageTransitionType.rightToLeft,
-                                child: InventarioMp(
-                                  usuario: widget.usuario,
-                                )));
-                      },
-                    )
-                  : SizedBox(),
-              tipoAcceso == 1
-                  ? ListTile(
-                      leading: Icon(
-                        Icons.monetization_on,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading: Icon(FontAwesomeIcons.dollarSign, color: Colors.white, size: 20),
                       title: Text('GASTOS',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -170,16 +170,39 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       },
                     )
                   : SizedBox(),
+                  Divider(
+                    height: 12,
+                    color: Colors.white,
+                    indent: 30,
+                    endIndent: 30,
+                    thickness: 1.1,
+                  ),
               tipoAcceso == 1 || tipoAcceso == 3
                   ? ListTile(
-                      leading: Icon(
-                        Icons.inventory,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading: Icon(FontAwesomeIcons.box, color: Colors.white, size: 20),
+                      title: Text('STOCK',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: InventarioMp(
+                                  usuario: widget.usuario,
+                                )));
+                      },
+                    )
+                  : SizedBox(),
+              
+              tipoAcceso == 1 || tipoAcceso == 3
+                  ? ListTile(
+                      leading: Icon(FontAwesomeIcons.pallet, color: Colors.white, size: 20),
                       title: Text('INVENTARIO',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -195,14 +218,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   : SizedBox(),
               tipoAcceso == 1
                   ? ListTile(
-                      leading: Icon(
-                        Icons.work,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading: Icon(FontAwesomeIcons.truckLoading, color: Colors.white, size: 20),
                       title: Text('PRODUCCIÓN',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -216,16 +235,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       },
                     )
                   : SizedBox(),
+                  Divider(
+                    height: 12,
+                    color: Colors.white,
+                    indent: 30,
+                    endIndent: 30,
+                    thickness: 1.1,
+                  ),
               tipoAcceso == 1
                   ? ListTile(
-                      leading: Icon(
-                        Icons.bar_chart,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading: Icon(FontAwesomeIcons.chartArea, color: Colors.white, size: 20),
                       title: Text('GRAFICAS',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -233,7 +255,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             context,
                             PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                child: VistaGraficas(
+                                child: VistaGraficas2(
                                   usuario: widget.usuario,
                                 )));
                       },
@@ -241,14 +263,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   : SizedBox(),
               tipoAcceso == 1
                   ? ListTile(
-                      leading: Icon(
-                        Icons.person,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading: Icon(FontAwesomeIcons.userFriends, color: Colors.white, size: 20),
                       title: Text('CLIENTES',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -264,14 +282,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   : SizedBox(),
               tipoAcceso == 1
                   ? ListTile(
-                      leading: Icon(
-                        Icons.supervised_user_circle,
-                        size: 25,
-                        color: Colors.white,
-                      ),
+                      leading: Icon(FontAwesomeIcons.peopleCarry, color: Colors.white, size: 20),
                       title: Text('PERSONAL',
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
@@ -285,21 +299,28 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       },
                     )
                   : SizedBox(),
-              Spacer(),
-              ListTile(
-                trailing: Wrap(
-                  spacing: 180, // space between two icons
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.login_outlined,
-                          size: 25, color: Colors.white),
-                      onPressed: () {
+                  Divider(
+                    height: 12,
+                    color: Colors.white,
+                    indent: 30,
+                    endIndent: 30,
+                    thickness: 1.1,
+                  ),
+              SizedBox(
+                height: 25,
+              ),
+
+                   ListTile(
+                      leading: Icon(FontAwesomeIcons.signOutAlt, color: Colors.white, size: 20),
+                      title: Text('Cerrar Sesión',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white)),
+                      onTap: () {
                         cerrarSesion(context);
                       },
-                    ),
-                  ],
-                ),
-              )
+                    )
             ])),
       ],
     ));
@@ -325,7 +346,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 style: (TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: colorPrincipal)),
+                    color: Colors.white)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -340,11 +361,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       },
                       icon: Icon(
                         Icons.check_circle,
-                        color: Color(0xff00cf8d),
+                        color: colorPrincipal,
                       ),
                       label: Text(
                         "Confirmar",
-                        style: TextStyle(color: colorPrincipal),
+                        style: TextStyle(color: Colors.white),
                       )),
                 ],
               )

@@ -1,28 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class DetailsPage1{
+class DetailsPage2{
   final String categoryName;
   final int month;
 
-  DetailsPage1(this.categoryName, this.month);
+  DetailsPage2(this.categoryName, this.month);
 }
 
-class DetailsParams extends StatefulWidget {
-  final DetailsPage1 params;
+class DetailsParams2 extends StatefulWidget {
+  final DetailsPage2 params;
 
-  const DetailsParams({Key key, this.params}) : super(key: key);
+  const DetailsParams2({Key key, this.params}) : super(key: key);
   @override
-  _DetailsParamsState createState() => _DetailsParamsState();
+  _DetailsParams2State createState() => _DetailsParams2State();
 }
 
-class _DetailsParamsState extends State<DetailsParams> {
+class _DetailsParams2State extends State<DetailsParams2> {
   @override
   Widget build(BuildContext context) {
 
      // ignore: deprecated_member_use
      var _query = FirebaseFirestore.instance
-                .collection('Ventas')
+                .collection('Gastos')
                 .where("Mes", isEqualTo: widget.params.month + 1)
                 .where("Nombre", isEqualTo: widget.params.categoryName)
                 .snapshots();
@@ -55,7 +55,7 @@ class _DetailsParamsState extends State<DetailsParams> {
                   onDismissed: (direction){
                     // ignore: deprecated_member_use
                     FirebaseFirestore.instance
-                      .collection('Ventas')
+                      .collection('Gastos')
                       // ignore: deprecated_member_use
                       .doc(document.id)
                       .delete();
