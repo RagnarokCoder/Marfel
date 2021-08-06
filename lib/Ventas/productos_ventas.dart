@@ -7,6 +7,7 @@ import 'package:icon_badge/icon_badge.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:paleteria_marfel/Ventas/Carrito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 List carrito = [];
 
@@ -36,7 +37,7 @@ class _SalesProductsState extends State<SalesProducts> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+  
     return Scaffold(
       appBar: AppBar(
           title: Text(categoria),
@@ -48,24 +49,16 @@ class _SalesProductsState extends State<SalesProducts> {
                 IconBadge(
                   icon: Icon(
                     Icons.shopping_cart,
-                    size: width * .07,
+                    size: 22,
                     color: Colors.white,
                   ),
-                  itemCount: 1,
+                  itemCount: carrito.length,
                   badgeColor: Colors.red,
                   itemColor: colorPrincipal,
                   hideZero: true,
                   onTap: () {
-                    setState(() {});
-                    showModalBottomSheet(
-                        builder: (BuildContext context) {
-                          return Container(
-                            width: width,
-                            height: height * 6 / 7,
-                            child: Orden(),
-                          );
-                        },
-                        context: context);
+                   buildCarrito(context);
+                    
                   },
                 ),
               ],
@@ -82,11 +75,13 @@ class _SalesProductsState extends State<SalesProducts> {
             child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection("Inventario")
-                    .where("Categoria", isEqualTo: categoria)
+                    .where("Molde", isEqualTo: categoria)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Text("Cargando Productos...");
+                    return Center(
+                      child: Image.asset("assets/marfelLoad.gif"),
+                    );
                   }
                   int length = snapshot.data.docs.length;
                   return GridView.builder(
@@ -96,7 +91,7 @@ class _SalesProductsState extends State<SalesProducts> {
                       crossAxisCount: 2, //columnas
                       mainAxisSpacing: 10.0, //espacio entre cards
                       crossAxisSpacing: 10,
-                      childAspectRatio: 1, // largo de la card
+                      childAspectRatio: .88, // largo de la card
                     ),
                     itemCount: length,
                     itemBuilder: (BuildContext context, int index) {
@@ -124,6 +119,22 @@ class _SalesProductsState extends State<SalesProducts> {
       ),
     );
   }
+  buildCarrito(BuildContext context){
+    YudizModalSheet.show(
+        context: context,
+        child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                color: Colors.white,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height *.6,
+                            child: Orden(),
+                          );
+            }
+        ),
+        direction: YudizModalSheetDirection.BOTTOM
+    );
+  }
 
   Future setCarrito() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -147,6 +158,7 @@ class _SalesProductsState extends State<SalesProducts> {
           children: [
             Icon(
               Icons.arrow_back_ios,
+              size: 18,
               color: colorPrincipal,
             ),
             Text(
@@ -172,7 +184,7 @@ class CardMolde extends StatelessWidget {
 
   final String img;
   final String molde;
-  final int max;
+  final dynamic max;
   const CardMolde(
       {Key key,
       @required this.title,
@@ -209,6 +221,7 @@ class CardMolde extends StatelessWidget {
                       ),
                       onPressed: () {
                         addItem();
+                        
                       },
                     ))
               ],
@@ -247,4 +260,8 @@ class CardMolde extends StatelessWidget {
     await prefs.setString('carrito', carr);
     print(prefs.getString('carrito'));
   }
+
+  
+
+
 }

@@ -44,13 +44,7 @@ class _LoginState extends State<Login> {
                   
                   )
                   ),
-                  Text("Inicio De Sesión",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold
-                  ),
-                  ),
+                  
                   
               ],
             ),
