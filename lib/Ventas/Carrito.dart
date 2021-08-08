@@ -213,10 +213,21 @@ class _OrdenState extends State<Orden> {
         });
   }
 
-  getCarrito() {}
+  getCarrito() {
+    List<Map> carritoAux = [];
+    carrito.forEach((element) {
+      carritoAux.add({
+        "Cantidad": element['count'],
+        "Molde": element['molde'],
+        "NombreProducto": element['nombre'],
+        "Subtotal": element['count'] * element['price']
+      });
+    });
+    return carritoAux;
+  }
 }
 
-class _CardOrden extends StatelessWidget {
+class _CardOrden extends StatefulWidget {
   const _CardOrden(
       {Key key,
       @required this.counter,
@@ -236,6 +247,14 @@ class _CardOrden extends StatelessWidget {
   final String name;
   final String molde;
   final String imagen;
+
+  @override
+  __CardOrdenState createState() => __CardOrdenState(counter);
+}
+
+class __CardOrdenState extends State<_CardOrden> {
+  __CardOrdenState(this.counter);
+  int counter;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -243,25 +262,29 @@ class _CardOrden extends StatelessWidget {
     return Row(
       children: [
         Container(
-          child: Image(height: height * .06, image: NetworkImage(imagen)),
+          child:
+              Image(height: height * .06, image: NetworkImage(widget.imagen)),
         ),
-        Container(width: width * .3, child: Text(molde + ' ' + name)),
+        Container(
+            width: width * .3, child: Text(widget.molde + ' ' + widget.name)),
         Container(
           child: botoncitos(
             context: context,
             initNumber: counter,
             minNumber: 1,
-            maxNumber: max,
+            maxNumber: widget.max,
+            add: () => change(true),
+            rest: () => change(false),
           ),
         ),
         Container(
             width: width * .2,
             margin: EdgeInsets.only(left: height * .01),
-            child: Text(' \$ $price c/u')),
+            child: Text(' \$ ${widget.price} c/u')),
         Spacer(),
         IconButton(
             onPressed: () {
-              delete();
+              widget.delete();
             },
             icon: Icon(
               Icons.delete_outlined,
@@ -275,14 +298,26 @@ class _CardOrden extends StatelessWidget {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List carrito = json.decode(prefs.getString('carrito'));
     int index = carrito.indexWhere((element) =>
-        element.containsValue(name) && element.containsValue(molde));
+        element.containsValue(widget.name) &&
+        element.containsValue(widget.molde));
     carrito = json.decode(prefs.getString('carrito'));
+    print(carrito[index]['max']);
     if (choice) {
-      carrito[index]['count']++;
+      if (carrito[index]['max'] > counter)
+        setState(() {
+          carrito[index]['count']++;
+          counter++;
+          widget.state();
+        });
     }
 
     if (!choice) {
-      carrito[index]['count']--;
+      if (counter > 1)
+        setState(() {
+          carrito[index]['count']--;
+          counter--;
+          widget.state();
+        });
     }
 
     var carEncode = json.encode(carrito);
@@ -293,7 +328,9 @@ class _CardOrden extends StatelessWidget {
       {@required int maxNumber,
       @required int minNumber,
       @required int initNumber,
-      @required BuildContext context}) {
+      @required BuildContext context,
+      @required Function add,
+      @required Function rest}) {
     var _currentCount = initNumber;
     return Container(
       margin: EdgeInsets.only(left: 10),
@@ -307,22 +344,32 @@ class _CardOrden extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-              width: MediaQuery.of(context).size.width * .07,
-              color: Colors.red,
-              child: IconButton(icon: Icon(Icons.remove), onPressed: () {})),
-          Text(_currentCount.toString()),
           InkWell(
             onTap: () {
-              print('object');
+              rest();
             },
             child: Container(
                 alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width * .07,
-                height: MediaQuery.of(context).size.width * .07,
+                width: MediaQuery.of(context).size.width * .06,
+                height: MediaQuery.of(context).size.width * .06,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(
-                        MediaQuery.of(context).size.width * .035),
+                        MediaQuery.of(context).size.width * .03),
+                    color: colorPrincipal),
+                child: Icon(Icons.remove)),
+          ),
+          Text(_currentCount.toString()),
+          InkWell(
+            onTap: () {
+              add();
+            },
+            child: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width * .06,
+                height: MediaQuery.of(context).size.width * .06,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * .03),
                     color: colorPrincipal),
                 child: Icon(Icons.add)),
           ),
