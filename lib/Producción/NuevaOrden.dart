@@ -851,7 +851,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
       if (value['Cuadraleta'] != null) _cuadController += value['Cuadraleta'];
       if (value['Mini'] != null) _miniController += value['Mini'];
       if (value['Hexagonal'] != null) _hexaController += value['Hexagonal'];
-      if (value['Maxi'] != null) _miniController += value['Maxi'];
+      if (value['Maxi'] != null) _maxiController += value['Maxi'];
 
       if (value['Helado 5L Agua'] != null) {
         _fiveLController += value['Helado 5L Agua'];
