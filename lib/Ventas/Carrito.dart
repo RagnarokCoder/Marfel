@@ -241,7 +241,7 @@ class _CardOrden extends StatefulWidget {
       : super(key: key);
   final Function delete;
   final Function state;
-  final int price;
+  final double price;
   final int counter;
   final int max;
   final String name;
@@ -278,7 +278,7 @@ class __CardOrdenState extends State<_CardOrden> {
           ),
         ),
         Container(
-            width: width * .2,
+            width: width * .18,
             margin: EdgeInsets.only(left: height * .01),
             child: Text(' \$ ${widget.price} c/u')),
         Spacer(),

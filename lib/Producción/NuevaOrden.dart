@@ -349,7 +349,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
             "Cuadraleta": _cuadController,
             "Hexagonal": _hexaController,
             "Mini": _miniController,
-            "Hexa": _hexaController
+            "Maxi": _maxiController
           }).then((value) => {
               setState(() {
                 prodPart = true;

@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:icon_badge/icon_badge.dart';
@@ -52,7 +51,7 @@ class _VistaVentasState extends State<VistaVentas> {
                       size: 22,
                       color: Colors.white,
                     ),
-                    itemCount: 3,
+                    itemCount: carrito.length,
                     badgeColor: Colors.red,
                     itemColor: colorPrincipal,
                     hideZero: true,
@@ -77,65 +76,59 @@ class _VistaVentasState extends State<VistaVentas> {
         drawer: CustomAppBar(
           usuario: widget.usuario,
         ),
-        body: _tableCards()
-        
-        );
+        body: _tableCards());
   }
 
   Widget _tableCards() {
     return ListView(
-        children: [
-         
-          Container(
-            height: MediaQuery.of(context).size.height * .82,
-            child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection("Molde")
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                     return Center(
-                      child: Image.asset("assets/marfelLoad.gif"),
-                    );
-                  }
-                  int length = snapshot.data.docs.length;
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, //columnas
-                      mainAxisSpacing: 10.0, //espacio entre cards
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 1, // largo de la card
-                    ),
-                    itemCount: length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final DocumentSnapshot doc = snapshot.data.docs[index];
-                      print(doc.toString());
-                      if (doc.data()['img'] != null) {
-                        return Molde(
-                        
-                          title: doc.data()['nombre'],
-                          img: doc.data()['img'],
-                          function: (){
-                            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => SalesProducts(
-                    categoria: doc.data()['nombre'],
-                    usuario: widget.usuario,
-                  )));
-                          },
-                        );
-                      }
-                      return Molde(
-                          title: doc.data()['nombre'],
-                          img:
-                              'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
-                    },
+      children: [
+        Container(
+          height: MediaQuery.of(context).size.height * .82,
+          child: StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection("Molde").snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Image.asset("assets/marfelLoad.gif"),
                   );
-                }),
-          ),
-        ],
-      );
+                }
+                int length = snapshot.data.docs.length;
+                return GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, //columnas
+                    mainAxisSpacing: 10.0, //espacio entre cards
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 1, // largo de la card
+                  ),
+                  itemCount: length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final DocumentSnapshot doc = snapshot.data.docs[index];
+                    print(doc.toString());
+                    if (doc.data()['img'] != null) {
+                      return Molde(
+                        title: doc.data()['nombre'],
+                        img: doc.data()['img'],
+                        function: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SalesProducts(
+                                    categoria: doc.data()['nombre'],
+                                    usuario: widget.usuario,
+                                  )));
+                        },
+                      );
+                    }
+                    return Molde(
+                        title: doc.data()['nombre'],
+                        img:
+                            'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
+                  },
+                );
+              }),
+        ),
+      ],
+    );
   }
 
   Future<void> getCarr() async {
@@ -146,64 +139,57 @@ class _VistaVentasState extends State<VistaVentas> {
   }
 }
 
-
 class Molde extends StatelessWidget {
   final String title;
   final Function function;
   final String img;
-  const Molde(
-      {Key key,
-      @required this.title,
-      @required this.img, this.function,
-      })
-      : super(key: key);
+  const Molde({
+    Key key,
+    @required this.title,
+    @required this.img,
+    this.function,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
 
     return InkWell(
-      onTap: function,
-      child:
-      Container(
-      width: width * .4,
-      height: width * .4,
-      margin: EdgeInsets.all(10),
-      child: Material(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
-        elevation: 10,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+        onTap: function,
+        child: Container(
+          width: width * .4,
+          height: width * .4,
+          margin: EdgeInsets.all(10),
+          child: Material(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+            elevation: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(right: 10),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.check,
+                            color: colorPrincipal,
+                          ),
+                          onPressed: () {},
+                        ))
+                  ],
+                ),
                 Container(
-                    margin: EdgeInsets.only(right: 10),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.check,
-                        color: colorPrincipal,
-                      ),
-                      onPressed: () {
-                        
-                      },
-                    ))
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    width: width * .25,
+                    child: Image(image: NetworkImage(img))),
+                Container(child: Text(title)),
               ],
             ),
-            Container(
-                height: MediaQuery.of(context).size.height*0.08,
-                width: width * .25, child: Image(image: NetworkImage(img))),
-            Container(child: Text(title)),
-            
-          ],
-        ),
-      ),
-    )
-    );
+          ),
+        ));
   }
-
- 
 }

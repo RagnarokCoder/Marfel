@@ -116,7 +116,6 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
                                 total1L = 0;
 
                                 result.docs.forEach((result) {
-                                  print('holaaaa' + result.toString());
                                   setState(() {
                                     //Maxi
                                     result.data()['Maxi'] != null
@@ -380,9 +379,8 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
                               .where("Año", isEqualTo: year)
                               .snapshots(),
                           builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              print(snapshot.data);
-                              return Text('Cargando');
+                            if (!snapshot.hasData) {
+                              return Text("Cargando");
                             }
                             return widget.categoria == "Paleta"
                                 ? Column(
@@ -396,25 +394,11 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
                                             .map<Widget>(
                                                 (doc) => _buildHelados(doc))
                                             .toList())
-                                    : widget.categoria == "Bolis"
-                                        ? Column(
-                                            children: snapshot.data.docs
-                                                .map<Widget>(
-                                                    (doc) => _buildBolis(doc))
-                                                .toList())
-                                        : widget.categoria == "Sandwich"
-                                            ? Column(
-                                                children: snapshot.data.docs
-                                                    .map<Widget>((doc) =>
-                                                        _buildSandwich(doc))
-                                                    .toList())
-                                            : widget.categoria == "Troles"
-                                                ? Column(
-                                                    children: snapshot.data.docs
-                                                        .map<Widget>((doc) =>
-                                                            _buildTroles(doc))
-                                                        .toList())
-                                                : CircularProgressIndicator();
+                                    : Column(
+                                        children: snapshot.data.docs
+                                            .map<Widget>(
+                                                (doc) => _buildElse(doc))
+                                            .toList());
                           },
                         ),
                       ],
@@ -476,15 +460,11 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
   }
 
   _buildPaletas(DocumentSnapshot doc) {
-    dynamic maxi;
-    if (doc.data()['Maxi'] == null) {
-      maxi = 0;
-    } else {
-      maxi = doc.data()['Maxi'];
-    }
+    Map<String, dynamic> sabores = doc.data()["Sabores"];
     return Container(
       margin: EdgeInsets.all(15),
-      height: MediaQuery.of(context).size.height * 0.2,
+      height: (MediaQuery.of(context).size.height * 0.11) +
+          (MediaQuery.of(context).size.height * 0.05) * sabores.length,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.all(
@@ -499,77 +479,134 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: Center(
-                child: Text(
-                  doc.data()['Categoria'] +
-                      "\n" +
-                      doc.data()['Sabor'].toString() +
-                      " " +
-                      doc.data()['Materia'],
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
-                ),
-              )),
+            margin: EdgeInsets.only(left: 10),
+            child: Text("Sabores:",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold)),
+          ),
+          for (var i in sabores.keys)
+            Container(
+                height: MediaQuery.of(context).size.height * 0.05,
+                child: Center(
+                  child: doc.data()["Sabores"][i]["Materia"] == "Agua"
+                      ? Text(
+                          i +
+                              "\n" +
+                              doc.data()["Sabores"][i]["Materia"].toString() +
+                              "   " +
+                              doc.data()["Medida"] +
+                              ":" +
+                              doc
+                                  .data()["Sabores"][i][doc.data()["Medida"]]
+                                  .toString() +
+                              "   Mini: " +
+                              doc.data()["Sabores"][i]["Mini"].toString() +
+                              "  Hexa: " +
+                              doc.data()["Sabores"][i]["Hexagonal"].toString() +
+                              "  Cuad: " +
+                              doc
+                                  .data()["Sabores"][i]["Cuadraleta"]
+                                  .toString() +
+                              "  Maxi: " +
+                              doc.data()["Sabores"][i]["Maxi"].toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        )
+                      : Text(
+                          i +
+                              "\n" +
+                              doc.data()["Sabores"][i]["Materia"].toString() +
+                              "   " +
+                              doc.data()["Medida"] +
+                              ":" +
+                              doc
+                                  .data()["Sabores"][i][doc.data()["Medida"]]
+                                  .toString() +
+                              "   Mini: " +
+                              doc.data()["Sabores"][i]["Mini"].toString() +
+                              "  Hexa: " +
+                              doc.data()["Sabores"][i]["Hexagonal"].toString() +
+                              "  Cuad: " +
+                              doc.data()["Sabores"][i]["Cuadraleta"].toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                )),
           Divider(
             height: 12,
             color: Colors.black,
           ),
           Container(
-              height: MediaQuery.of(context).size.height * 0.08,
-              child: Column(
-                children: [
-                  Text(
-                    "Cuadraleta: " +
-                        f.format(doc.data()['Cuadraleta']).toString(),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Hexagonal: " +
-                        f.format(doc.data()['Hexagonal']).toString(),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  maxi == 0
-                      ? SizedBox()
-                      : Text(
-                          "Maxi: " + f.format(doc.data()['Maxi']).toString(),
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold),
-                        ),
-                  Text(
-                    "Turno: " + doc.data()['Turno'],
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )),
-          Container(
             padding: EdgeInsets.only(left: 10, right: 10),
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: MediaQuery.of(context).size.height * 0.06,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Tambos: " + doc.data()['Tambo'].toString(),
+                  "Tambos: " + doc.data()['Tambos'].toString(),
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 13,
                       fontWeight: FontWeight.bold),
                 ),
+                Container(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Mini: " + f.format(doc.data()['Mini']).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Hexa: " +
+                              f.format(doc.data()['Hexagonal']).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Turno: " + doc.data()['Turno'],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )),
+                Container(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Cuad: " +
+                              f.format(doc.data()['Cuadraleta']).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Maxi: " + f.format(doc.data()['Maxi']).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    )),
                 Text(
                   doc.data()['Dia'].toString() +
                       "/" +
@@ -590,9 +627,11 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
   }
 
   _buildHelados(DocumentSnapshot doc) {
+    Map<String, dynamic> sabores = doc.data()["Sabores"];
     return Container(
       margin: EdgeInsets.all(15),
-      height: MediaQuery.of(context).size.height * 0.2,
+      height: (MediaQuery.of(context).size.height * 0.11) +
+          (MediaQuery.of(context).size.height * 0.05) * sabores.length,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.all(
@@ -607,66 +646,112 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: Center(
-                child: Text(
-                  doc.data()['Categoria'] +
-                      "\n" +
-                      doc.data()['Sabor'].toString() +
-                      " " +
-                      doc.data()['Materia'],
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
-                ),
-              )),
+            margin: EdgeInsets.only(left: 10),
+            child: Text("Sabores:",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold)),
+          ),
+          for (var i in sabores.keys)
+            Container(
+                height: MediaQuery.of(context).size.height * 0.05,
+                child: Center(
+                  child: doc.data()["Sabores"][i]["Materia"] == "Leche"
+                      ? Text(
+                          i +
+                              "\n" +
+                              doc.data()["Sabores"][i]["Materia"].toString() +
+                              "   " +
+                              doc.data()["Medida"] +
+                              ":" +
+                              doc
+                                  .data()["Sabores"][i][doc.data()["Medida"]]
+                                  .toString() +
+                              "   5L: " +
+                              doc
+                                  .data()["Sabores"][i]["Helado 5L Leche"]
+                                  .toString() +
+                              "  1L: " +
+                              doc
+                                  .data()["Sabores"][i]["Helado 1L Leche"]
+                                  .toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        )
+                      : Text(
+                          i +
+                              "\n" +
+                              doc.data()["Sabores"][i]["Materia"].toString() +
+                              "   " +
+                              doc.data()["Medida"] +
+                              ":" +
+                              doc
+                                  .data()["Sabores"][i][doc.data()["Medida"]]
+                                  .toString() +
+                              "  5L: " +
+                              doc
+                                  .data()["Sabores"][i]["Helado 5L Agua"]
+                                  .toString() +
+                              "  1L: " +
+                              doc
+                                  .data()["Sabores"][i]["Helado 1L Agua"]
+                                  .toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                )),
           Divider(
             height: 12,
             color: Colors.black,
           ),
           Container(
-              height: MediaQuery.of(context).size.height * 0.08,
-              child: Column(
-                children: [
-                  Text(
-                    "1L: " + f.format(doc.data()['1L']).toString(),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "5L: " + f.format(doc.data()['5L']).toString(),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Turno: " + doc.data()['Turno'],
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )),
-          Container(
             padding: EdgeInsets.only(left: 10, right: 10),
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: MediaQuery.of(context).size.height * 0.06,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Tandas: " + doc.data()['Tanda'].toString(),
+                  "Tandas: " + doc.data()['Tandas'].toString(),
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 13,
                       fontWeight: FontWeight.bold),
                 ),
+                Container(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    child: Column(
+                      children: [
+                        Text(
+                          "1L: " + f.format(doc.data()['1 Litro']).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "5L: " + f.format(doc.data()['5 Litros']).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Turno: " + doc.data()['Turno'],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )),
                 Text(
                   doc.data()['Dia'].toString() +
                       "/" +
@@ -686,17 +771,12 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
     );
   }
 
-  _buildBolis(DocumentSnapshot doc) {
-    return Container(
-      height: 200,
-      color: Colors.red,
-    );
-  }
-
-  _buildSandwich(DocumentSnapshot doc) {
+  _buildElse(DocumentSnapshot doc) {
+    Map<String, dynamic> sabores = doc.data()["Sabores"];
     return Container(
       margin: EdgeInsets.all(15),
-      height: MediaQuery.of(context).size.height * 0.2,
+      height: (MediaQuery.of(context).size.height * 0.11) +
+          (MediaQuery.of(context).size.height * 0.05) * sabores.length,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.all(
@@ -711,149 +791,75 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: Center(
-                child: Text(
-                  doc.data()['Categoria'] +
+            margin: EdgeInsets.only(left: 10),
+            child: Text("Sabores:",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold)),
+          ),
+          for (var i in sabores.keys)
+            Container(
+                height: MediaQuery.of(context).size.height * 0.05,
+                child: Center(
+                    child: Text(
+                  i +
                       "\n" +
-                      doc.data()['Sabor'].toString() +
-                      " " +
-                      doc.data()['Materia'],
+                      doc.data()["Sabores"][i]["Materia"].toString() +
+                      "   " +
+                      doc.data()["Medida"] +
+                      ": " +
+                      doc
+                          .data()["Sabores"][i][doc.data()["Medida"]]
+                          .toString() +
+                      "   Piezas: " +
+                      doc.data()["Sabores"][i]["Piezas"].toString(),
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
-                ),
-              )),
+                ))),
           Divider(
             height: 12,
             color: Colors.black,
           ),
           Container(
-              height: MediaQuery.of(context).size.height * 0.08,
-              child: Column(
-                children: [
-                  Text(
-                    "Piezas: " + f.format(doc.data()['Piezas']).toString(),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Turno: " + doc.data()['Turno'],
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )),
-          Container(
             padding: EdgeInsets.only(left: 10, right: 10),
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: MediaQuery.of(context).size.height * 0.06,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Tambos: " + doc.data()['Tambo'].toString(),
+                  "Tambos: " + doc.data()['Tambos'].toString(),
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 13,
                       fontWeight: FontWeight.bold),
                 ),
-                Text(
-                  doc.data()['Dia'].toString() +
-                      "/" +
-                      doc.data()['Mes'].toString() +
-                      "/" +
-                      doc.data()['Año'].toString(),
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  _buildTroles(DocumentSnapshot doc) {
-    return Container(
-      margin: EdgeInsets.all(15),
-      height: MediaQuery.of(context).size.height * 0.2,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10.0),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            offset: Offset(0.0, 1.0), //(x,y)
-            blurRadius: 6.0,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: Center(
-                child: Text(
-                  doc.data()['Categoria'] +
-                      "\n" +
-                      doc.data()['Sabor'].toString() +
-                      " " +
-                      doc.data()['Materia'],
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold),
-                ),
-              )),
-          Divider(
-            height: 12,
-            color: Colors.black,
-          ),
-          Container(
-              height: MediaQuery.of(context).size.height * 0.08,
-              child: Column(
-                children: [
-                  Text(
-                    "Piezas: " + f.format(doc.data()['Piezas']).toString(),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Turno: " + doc.data()['Turno'],
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              )),
-          Container(
-            padding: EdgeInsets.only(left: 10, right: 10),
-            height: MediaQuery.of(context).size.height * 0.05,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Tambos: " + doc.data()['Tambo'].toString(),
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
-                ),
+                Container(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Piezas: " +
+                              f.format(doc.data()['Piezas']).toString(),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Turno: " + doc.data()['Turno'],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )),
                 Text(
                   doc.data()['Dia'].toString() +
                       "/" +

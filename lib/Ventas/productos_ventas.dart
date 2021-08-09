@@ -37,7 +37,7 @@ class _SalesProductsState extends State<SalesProducts> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-  
+
     return Scaffold(
       appBar: AppBar(
           title: Text(categoria),
@@ -57,8 +57,7 @@ class _SalesProductsState extends State<SalesProducts> {
                   itemColor: colorPrincipal,
                   hideZero: true,
                   onTap: () {
-                   buildCarrito(context);
-                    
+                    buildCarrito(context);
                   },
                 ),
               ],
@@ -119,21 +118,20 @@ class _SalesProductsState extends State<SalesProducts> {
       ),
     );
   }
-  buildCarrito(BuildContext context){
+
+  buildCarrito(BuildContext context) {
     YudizModalSheet.show(
         context: context,
         child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                color: Colors.white,
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height *.6,
-                            child: Orden(),
-                          );
-            }
-        ),
-        direction: YudizModalSheetDirection.BOTTOM
-    );
+          return Container(
+            color: Colors.white,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * .6,
+            child: Orden(),
+          );
+        }),
+        direction: YudizModalSheetDirection.BOTTOM);
   }
 
   Future setCarrito() async {
@@ -148,7 +146,8 @@ class _SalesProductsState extends State<SalesProducts> {
   Container _return(BuildContext context) {
     return Container(
       width: 50,
-      margin: EdgeInsets.only(top: 10, left: 10, right: 300),
+      height: 30,
+      margin: EdgeInsets.only(top: 10, left: 10),
       alignment: Alignment.topLeft,
       child: InkWell(
         onTap: () {
@@ -197,8 +196,8 @@ class CardMolde extends StatelessWidget {
     final double width = MediaQuery.of(context).size.width;
 
     return Container(
-      width: width * .4,
-      height: width * .4,
+      width: width * .41,
+      height: width * .41,
       margin: EdgeInsets.all(10),
       child: Material(
         borderRadius: BorderRadius.circular(20),
@@ -221,13 +220,12 @@ class CardMolde extends StatelessWidget {
                       ),
                       onPressed: () {
                         addItem();
-                        
                       },
                     ))
               ],
             ),
             Container(
-                width: width * .25, child: Image(image: NetworkImage(img))),
+                width: width * .20, child: Image(image: NetworkImage(img))),
             Container(child: Text(title)),
             Container(
                 margin: EdgeInsets.only(bottom: width * .05),
@@ -251,7 +249,7 @@ class CardMolde extends StatelessWidget {
         'img': img,
         'molde': molde,
         'count': 1,
-        'price': 14,
+        'price': 1.0,
         'max': max
       });
     }
@@ -261,7 +259,17 @@ class CardMolde extends StatelessWidget {
     print(prefs.getString('carrito'));
   }
 
-  
-
-
+  getPrices(String molde) async {
+    var d;
+    CollectionReference ref = FirebaseFirestore.instance.collection("Molde");
+    var doc = await ref.where("nombre", isEqualTo: molde).get().then((value) {
+      if (value.docs.isEmpty) {
+        print("a" + value.docs.toString());
+      }
+      print("b" + value.docs[0]["mayoreo"].toString());
+      d = value.docs[0]["mayoreo"];
+      print(d);
+      return d;
+    });
+  }
 }
