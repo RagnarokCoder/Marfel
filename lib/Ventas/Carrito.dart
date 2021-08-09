@@ -69,23 +69,23 @@ class _OrdenState extends State<Orden> {
             itemCount: carrito.length,
             itemBuilder: (BuildContext context, int index) {
               return _CardOrden(
-                delete: () {
-                  setState(() {
-                    delete(carrito[index]['molde'], carrito[index]['nombre']);
-                  });
-                },
-                state: () {
-                  setState(() {
-                    getTotal;
-                  });
-                },
-                max: carrito[index]['max'],
-                counter: carrito[index]['count'],
-                name: carrito[index]['nombre'],
-                molde: carrito[index]['molde'],
-                price: carrito[index]['price'],
-                imagen: carrito[index]['img'],
-              );
+                  delete: () {
+                    setState(() {
+                      delete(carrito[index]['molde'], carrito[index]['nombre']);
+                    });
+                  },
+                  state: () {
+                    setState(() {
+                      getTotal;
+                    });
+                  },
+                  max: carrito[index]['max'],
+                  counter: carrito[index]['count'],
+                  name: carrito[index]['nombre'],
+                  molde: carrito[index]['molde'],
+                  price: carrito[index]['price'],
+                  imagen: carrito[index]['img'],
+                  id: carrito[index]['id']);
             },
           ),
         ),
@@ -187,6 +187,14 @@ class _OrdenState extends State<Orden> {
   }
 
   Future<void> _subirVenta() async {
+    var collection = FirebaseFirestore.instance.collection('Inventario');
+    carrito.forEach((element) {
+      collection
+          .doc(element['id'])
+          .update({'Cantidad': element["max"] - element['count']})
+          .then((_) => print('Updated'))
+          .catchError((error) => print('Update failed: $error'));
+    });
     String date = DateTime.now().day.toString() +
         '/' +
         DateTime.now().month.toString() +
@@ -236,6 +244,7 @@ class _CardOrden extends StatefulWidget {
       @required this.price,
       @required this.molde,
       @required this.max,
+      @required this.id,
       this.state,
       this.imagen})
       : super(key: key);
@@ -245,6 +254,7 @@ class _CardOrden extends StatefulWidget {
   final int counter;
   final int max;
   final String name;
+  final String id;
   final String molde;
   final String imagen;
 
@@ -263,7 +273,7 @@ class __CardOrdenState extends State<_CardOrden> {
       children: [
         Container(
           child:
-              Image(height: height * .06, image: NetworkImage(widget.imagen)),
+              Image(height: height * .05, image: NetworkImage(widget.imagen)),
         ),
         Container(
             width: width * .3, child: Text(widget.molde + ' ' + widget.name)),

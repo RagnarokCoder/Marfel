@@ -102,12 +102,14 @@ class _SalesProductsState extends State<SalesProducts> {
                           title: doc.data()['NombreProducto'],
                           img: doc.data()['Imagen'],
                           molde: doc.data()['Molde'],
+                          id: doc.id,
                         );
                       }
                       return CardMolde(
                           max: doc.data()['Cantidad'],
                           title: doc.data()['NombreProducto'],
                           molde: doc.data()['Molde'],
+                          id: doc.id,
                           img:
                               'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
                     },
@@ -184,12 +186,14 @@ class CardMolde extends StatelessWidget {
   final String img;
   final String molde;
   final dynamic max;
+  final String id;
   const CardMolde(
       {Key key,
       @required this.title,
       @required this.img,
       this.molde,
-      @required this.max})
+      @required this.max,
+      this.id})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -250,7 +254,8 @@ class CardMolde extends StatelessWidget {
         'molde': molde,
         'count': 1,
         'price': 1.0,
-        'max': max
+        'max': max,
+        'id': id
       });
     }
 
@@ -261,7 +266,7 @@ class CardMolde extends StatelessWidget {
 
   getPrices(String molde) async {
     var d;
-    CollectionReference ref = FirebaseFirestore.instance.collection("Molde");
+    CollectionReference ref = FirebaseFirestore.instance.collection("Precios");
     var doc = await ref.where("nombre", isEqualTo: molde).get().then((value) {
       if (value.docs.isEmpty) {
         print("a" + value.docs.toString());
