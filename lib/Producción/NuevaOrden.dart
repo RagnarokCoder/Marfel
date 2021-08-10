@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:paleteria_marfel/Login/Login.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
+import 'package:expansion_card/expansion_card.dart';
 
 class NuevaOrden extends StatefulWidget {
   NuevaOrden({Key key}) : super(key: key);
@@ -14,11 +15,14 @@ class NuevaOrden extends StatefulWidget {
 
 var selectedCurrency1;
 var selectedCurrency;
-final _maxiController = TextEditingController();
-final _cuadController = TextEditingController();
-final _hexaController = TextEditingController();
-final _fiveLController = TextEditingController();
-final _oneLController = TextEditingController();
+int _pzController = 0;
+int _moldeController = 0;
+int _miniController = 0;
+int _maxiController = 0;
+int _cuadController = 0;
+int _hexaController = 0;
+int _fiveLController = 0;
+int _oneLController = 0;
 
 int diaSel, mesSel, yearSel;
 int selector = 0;
@@ -200,13 +204,13 @@ class _NuevaOrdenState extends State<NuevaOrden> {
               ));
   }
 
-  Container _moldesCard(BuildContext context, String key) {
+  _moldesCard(BuildContext context, String key) {
     String nombre = key;
     String tipo = mapProductos[nombre];
     return Container(
-        margin: EdgeInsets.all(10),
         width: MediaQuery.of(context).size.width * .8,
-        height: MediaQuery.of(context).size.height * .07,
+        height: MediaQuery.of(context).size.height * .13,
+        margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: colorPrincipal,
@@ -319,6 +323,7 @@ class _NuevaOrdenState extends State<NuevaOrden> {
   }
 
   subirProduccion() {
+    _calcularTotales();
     String medida = '';
     if (categoria == 'Helado') {
       medida = 'Tandas';
@@ -331,32 +336,96 @@ class _NuevaOrdenState extends State<NuevaOrden> {
     } else {
       turno = "Noche";
     }
-    FirebaseFirestore.instance.collection("Produccion").add({
-      "Sabores": productos,
-      "Dia": DateTime.now().day,
-      "Mes": DateTime.now().month,
-      "Año": DateTime.now().year,
-      "Categoria": categoria,
-      "Turno": turno,
-      "Medida": medida
-    }).then((value) => {
-          setState(() {
-            prodPart = true;
-            _maxiController.text = "";
-            _hexaController.text = "";
-            _cuadController.text = "";
-            _fiveLController.text = "";
-            _oneLController.text = "";
-            productos.clear();
-            selectedCurrency1 = null;
-            prodPart = false;
-            icono = null;
-            materia = null;
-            categoria = null;
-            drop2 = null;
-            drop1 = null;
-          })
-        });
+    categoria == 'Paleta'
+        ? FirebaseFirestore.instance.collection("Produccion").add({
+            "Sabores": productos,
+            "Dia": DateTime.now().day,
+            "Mes": DateTime.now().month,
+            "Año": DateTime.now().year,
+            "Categoria": categoria,
+            "Tambos": _moldeController,
+            "Turno": turno,
+            "Medida": medida,
+            "Cuadraleta": _cuadController,
+            "Hexagonal": _hexaController,
+            "Mini": _miniController,
+            "Maxi": _maxiController
+          }).then((value) => {
+              setState(() {
+                prodPart = true;
+                _maxiController = 0;
+                _hexaController = 0;
+                _cuadController = 0;
+                _fiveLController = 0;
+                _oneLController = 0;
+                productos.clear();
+                selectedCurrency1 = null;
+                prodPart = false;
+                icono = null;
+                materia = null;
+                categoria = null;
+                drop2 = null;
+                drop1 = null;
+              })
+            })
+        : categoria == 'Helado'
+            ? FirebaseFirestore.instance.collection("Produccion").add({
+                "Sabores": productos,
+                "Dia": DateTime.now().day,
+                "Mes": DateTime.now().month,
+                "Año": DateTime.now().year,
+                "Tandas": _moldeController,
+                "5 Litros": _fiveLController,
+                "1 Litro": _oneLController,
+                "Categoria": categoria,
+                "Turno": turno,
+                "Medida": medida,
+              }).then((value) => {
+                  setState(() {
+                    prodPart = true;
+                    _maxiController = 0;
+                    _hexaController = 0;
+                    _cuadController = 0;
+                    _fiveLController = 0;
+                    _oneLController = 0;
+                    productos.clear();
+                    selectedCurrency1 = null;
+                    prodPart = false;
+                    icono = null;
+                    materia = null;
+                    categoria = null;
+                    drop2 = null;
+                    drop1 = null;
+                  })
+                })
+            : FirebaseFirestore.instance.collection("Produccion").add({
+                "Sabores": productos,
+                "Dia": DateTime.now().day,
+                "Mes": DateTime.now().month,
+                "Año": DateTime.now().year,
+                "Tambos": _moldeController,
+                "Categoria": categoria,
+                "Turno": turno,
+                "Medida": medida,
+                "Piezas": _pzController
+              }).then((value) => {
+                  setState(() {
+                    prodPart = true;
+                    _maxiController = 0;
+                    _hexaController = 0;
+                    _cuadController = 0;
+                    _fiveLController = 0;
+                    _oneLController = 0;
+                    productos.clear();
+                    selectedCurrency1 = null;
+                    prodPart = false;
+                    icono = null;
+                    materia = null;
+                    categoria = null;
+                    drop2 = null;
+                    drop1 = null;
+                  })
+                });
   }
 
   ButtonState stateTextWithIcon = ButtonState.idle;
@@ -440,11 +509,11 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                       onPressed: () {
                         setState(() {
                           prodPart = true;
-                          _maxiController.text = "";
-                          _hexaController.text = "";
-                          _cuadController.text = "";
-                          _fiveLController.text = "";
-                          _oneLController.text = "";
+                          _maxiController = 0;
+                          _hexaController = 0;
+                          _cuadController = 0;
+                          _fiveLController = 0;
+                          _oneLController = 0;
                           productos.clear();
                           selectedCurrency1 = null;
                           prodPart = false;
@@ -766,5 +835,45 @@ class _NuevaOrdenState extends State<NuevaOrden> {
         ),
       ),
     );
+  }
+
+  void _calcularTotales() {
+    _pzController = 0;
+    _moldeController = 0;
+    _miniController = 0;
+    _maxiController = 0;
+    _cuadController = 0;
+    _hexaController = 0;
+    _fiveLController = 0;
+    _oneLController = 0;
+    _miniController = 0;
+    productos.forEach((key, value) {
+      if (value['Cuadraleta'] != null) _cuadController += value['Cuadraleta'];
+      if (value['Mini'] != null) _miniController += value['Mini'];
+      if (value['Hexagonal'] != null) _hexaController += value['Hexagonal'];
+      if (value['Maxi'] != null) _maxiController += value['Maxi'];
+
+      if (value['Helado 5L Agua'] != null) {
+        _fiveLController += value['Helado 5L Agua'];
+      }
+      if (value['Helado 5L Leche'] != null) {
+        _fiveLController += value['Helado 5L Leche'];
+      }
+      if (value['Helado 1L Agua'] != null) {
+        _oneLController += value['Helado 1L Agua'];
+      }
+      if (value['Helado 1L Leche'] != null) {
+        _oneLController += value['Helado 1L Leche'];
+      }
+      if (value['Piezas'] != null) {
+        _pzController += value['Piezas'];
+      }
+      if (value['Tambos'] != null) {
+        _moldeController += value['Tambos'];
+      }
+      if (value['Tandas'] != null) {
+        _moldeController += value['Tandas'];
+      }
+    });
   }
 }

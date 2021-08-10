@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
@@ -75,7 +76,7 @@ class _OrdenState extends State<Orden> {
                   },
                   state: () {
                     setState(() {
-                      total = getTotal;
+                      getTotal;
                     });
                   },
                   max: carrito[index]['max'],
@@ -84,7 +85,7 @@ class _OrdenState extends State<Orden> {
                   molde: carrito[index]['molde'],
                   price: carrito[index]['price'],
                   imagen: carrito[index]['img'],
-                  );
+                  id: carrito[index]['id']);
             },
           ),
         ),
@@ -146,6 +147,7 @@ class _OrdenState extends State<Orden> {
             actions: [
               TextButton(
                   onPressed: () {
+                    _subirVenta();
                     Navigator.of(context).pop();
                   },
                   child: Text('si')),
@@ -176,13 +178,64 @@ class _OrdenState extends State<Orden> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int index = carrito.indexWhere((element) =>
         element.containsValue(name) && element.containsValue(molde));
-    carrito.removeAt(index);
-    var carEncode = json.encode(carrito);
-    prefs.setString('carrito', carEncode);
+
+    setState(() {
+      carrito.removeAt(index);
+      var carEncode = json.encode(carrito);
+      prefs.setString('carrito', carEncode);
+    });
+  }
+
+  Future<void> _subirVenta() async {
+    var collection = FirebaseFirestore.instance.collection('Inventario');
+    carrito.forEach((element) {
+      collection
+          .doc(element['id'])
+          .update({'Cantidad': element["max"] - element['count']})
+          .then((_) => print('Updated'))
+          .catchError((error) => print('Update failed: $error'));
+    });
+    String date = DateTime.now().day.toString() +
+        '/' +
+        DateTime.now().month.toString() +
+        '/' +
+        DateTime.now().year.toString();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    FirebaseFirestore.instance.collection("Ventas").add({
+      "Productos": getCarrito(),
+      "Dia": DateTime.now().day,
+      "Mes": DateTime.now().month,
+      "Año": DateTime.now().year,
+      "Date": DateTime.now(),
+      "FechaVenta": date,
+      "Total": total,
+      "Abonado": 0,
+      "Pendiente": false,
+      "Nombre": 'Juan'
+    }).then((value) => {
+          setState(() {
+            carrito = [];
+
+            prefs.setString('carrito', '[]');
+          })
+        });
+  }
+
+  getCarrito() {
+    List<Map> carritoAux = [];
+    carrito.forEach((element) {
+      carritoAux.add({
+        "Cantidad": element['count'],
+        "Molde": element['molde'],
+        "NombreProducto": element['nombre'],
+        "Subtotal": element['count'] * element['price']
+      });
+    });
+    return carritoAux;
   }
 }
 
-class _CardOrden extends StatelessWidget {
+class _CardOrden extends StatefulWidget {
   const _CardOrden(
       {Key key,
       @required this.counter,
@@ -191,16 +244,27 @@ class _CardOrden extends StatelessWidget {
       @required this.price,
       @required this.molde,
       @required this.max,
-      this.state, this.imagen})
+      @required this.id,
+      this.state,
+      this.imagen})
       : super(key: key);
   final Function delete;
   final Function state;
-  final int price;
+  final double price;
   final int counter;
   final int max;
   final String name;
+  final String id;
   final String molde;
   final String imagen;
+
+  @override
+  __CardOrdenState createState() => __CardOrdenState(counter);
+}
+
+class __CardOrdenState extends State<_CardOrden> {
+  __CardOrdenState(this.counter);
+  int counter;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -208,31 +272,29 @@ class _CardOrden extends StatelessWidget {
     return Row(
       children: [
         Container(
-          child: Image(
-              height: height * .06, image: NetworkImage(imagen)),
-        ),
-        Container(width: width * .3, child: Text(molde + ' ' + name)),
-        CounterView(
-          initNumber: counter,
-          minNumber: 1,
-          decreaseCallback: () {
-            change(false);
-            state();
-          },
-          increaseCallback: () {
-            change(true);
-            state();
-          },
-          maxNumber: max,
+          child:
+              Image(height: height * .05, image: NetworkImage(widget.imagen)),
         ),
         Container(
-            width: width * .2,
+            width: width * .3, child: Text(widget.molde + ' ' + widget.name)),
+        Container(
+          child: botoncitos(
+            context: context,
+            initNumber: counter,
+            minNumber: 1,
+            maxNumber: widget.max,
+            add: () => change(true),
+            rest: () => change(false),
+          ),
+        ),
+        Container(
+            width: width * .18,
             margin: EdgeInsets.only(left: height * .01),
-            child: Text(' \$ $price c/u')),
+            child: Text(' \$ ${widget.price} c/u')),
         Spacer(),
         IconButton(
             onPressed: () {
-              delete();
+              widget.delete();
             },
             icon: Icon(
               Icons.delete_outlined,
@@ -246,112 +308,83 @@ class _CardOrden extends StatelessWidget {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List carrito = json.decode(prefs.getString('carrito'));
     int index = carrito.indexWhere((element) =>
-        element.containsValue(name) && element.containsValue(molde));
+        element.containsValue(widget.name) &&
+        element.containsValue(widget.molde));
     carrito = json.decode(prefs.getString('carrito'));
+    print(carrito[index]['max']);
     if (choice) {
-      carrito[index]['count']++;
+      if (carrito[index]['max'] > counter)
+        setState(() {
+          carrito[index]['count']++;
+          counter++;
+          widget.state();
+        });
     }
 
     if (!choice) {
-      carrito[index]['count']--;
+      if (counter > 1)
+        setState(() {
+          carrito[index]['count']--;
+          counter--;
+          widget.state();
+        });
     }
 
     var carEncode = json.encode(carrito);
     prefs.setString('carrito', carEncode);
   }
-}
 
-class CounterView extends StatefulWidget {
-  final int initNumber;
-  final Function(int) counterCallback;
-  final Function increaseCallback;
-  final Function decreaseCallback;
-  final int minNumber;
-  final int maxNumber;
-  CounterView(
-      {this.initNumber,
-      this.counterCallback,
-      this.increaseCallback,
-      this.decreaseCallback,
-      this.minNumber,
-      this.maxNumber});
-  @override
-  _CounterViewState createState() => _CounterViewState();
-}
-
-class _CounterViewState extends State<CounterView> {
-  int _currentCount;
-  Function _counterCallback;
-  Function _increaseCallback;
-  Function _decreaseCallback;
-  int _minNumber;
-  int _maxNumber;
-
-  @override
-  void initState() {
-    _currentCount = widget.initNumber ?? 1;
-    _counterCallback = widget.counterCallback ?? (int number) {};
-    _increaseCallback = widget.increaseCallback ?? () {};
-    _decreaseCallback = widget.decreaseCallback ?? () {};
-    _minNumber = widget.minNumber ?? 0;
-    _maxNumber = widget.maxNumber ?? 100;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget botoncitos(
+      {@required int maxNumber,
+      @required int minNumber,
+      @required int initNumber,
+      @required BuildContext context,
+      @required Function add,
+      @required Function rest}) {
+    var _currentCount = initNumber;
     return Container(
-      margin: EdgeInsets.only(left: 20),
-      width: MediaQuery.of(context).size.width * .18,
+      margin: EdgeInsets.only(left: 10),
+      width: MediaQuery.of(context).size.width * .2,
       padding: EdgeInsets.zero,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _createIncrementDicrementButton(Icons.remove, () => _dicrement()),
+          InkWell(
+            onTap: () {
+              rest();
+            },
+            child: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width * .06,
+                height: MediaQuery.of(context).size.width * .06,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * .03),
+                    color: colorPrincipal),
+                child: Icon(Icons.remove)),
+          ),
           Text(_currentCount.toString()),
-          _createIncrementDicrementButton(Icons.add, () => _increment()),
+          InkWell(
+            onTap: () {
+              add();
+            },
+            child: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width * .06,
+                height: MediaQuery.of(context).size.width * .06,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * .03),
+                    color: colorPrincipal),
+                child: Icon(Icons.add)),
+          ),
         ],
       ),
-    );
-  }
-
-  void _increment() {
-    setState(() {
-      if (_currentCount < _maxNumber) {
-        _currentCount++;
-        _counterCallback(_currentCount);
-        _increaseCallback();
-      }
-    });
-  }
-
-  void _dicrement() {
-    setState(() {
-      if (_currentCount > _minNumber) {
-        _currentCount--;
-        _counterCallback(_currentCount);
-        _decreaseCallback();
-      }
-    });
-  }
-
-  Widget _createIncrementDicrementButton(IconData icon, Function onPressed) {
-    return RawMaterialButton(
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      constraints: BoxConstraints(minWidth: 25.0, minHeight: 25.0),
-      onPressed: onPressed,
-      elevation: 2.0,
-      fillColor: colorPrincipal,
-      child: Icon(
-        icon,
-        color: Colors.black,
-        size: 12.0,
-      ),
-      shape: CircleBorder(),
     );
   }
 }
