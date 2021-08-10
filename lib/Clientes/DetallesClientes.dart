@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:paleteria_marfel/Clientes/VistaClientes.dart';
+import 'package:paleteria_marfel/Gastos/VistaGastos.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
@@ -198,82 +199,34 @@ class _DetallesClientesState extends State<DetallesClientes> {
              ),
            ),
            Container(
-             height: MediaQuery.of(context).size.height*0.08,
+             height: MediaQuery.of(context).size.height*0.12,
              margin: EdgeInsets.all(10),
              
-             child: Column(
+             child: ListView(
+               scrollDirection: Axis.horizontal,
                children: [
-                 Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: [
-                   Text("\$"+"${f.format(totalabono)}", 
-                 style: TextStyle(
-                   color: colorPrincipal,
-                   fontSize: 15
-                 ),
-                 ),
-                 Text(" Interes del"+" $interesActual"+"%", 
-                 style: TextStyle(
-                   color: Colors.black,
-                   fontSize: 15
-                 ),
-                 ),
-                   ],
-                 ),
-                 Text("Diferido a"+" $meses"+" $diferido", 
-                 style: TextStyle(
-                   color: Colors.black,
-                   fontSize: 15
-                 ),
-                 ),
+                 StreamBuilder<QuerySnapshot>(
+                          
+            stream: FirebaseFirestore.instance.collection('Ventas')
+            .where("Pendiente", isEqualTo: true)
+            .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Row(
+                  
+                  children: snapshot.data.docs.map<Widget>((doc) => _buildListItem(doc)).toList(),);
+                
+              } else { 
+                return SizedBox(height: 10,);
+              }
+            },
+            
+          ),
                ],
              )
            ),
            
-           Container(
-             height: MediaQuery.of(context).size.height*0.05,
-             margin: EdgeInsets.all(10),
-             child: Row(
-               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-               children: [
-                 
-                 // ignore: deprecated_member_use
-                 RaisedButton.icon(
-                   color: colorPrincipal,
-                   shape: RoundedRectangleBorder(
-                            
-  borderRadius: BorderRadius.circular(10.0),
-  side: BorderSide(color: Colors.transparent)
-),
-                   onPressed: (){
-                     _abonarCapital();
-                   },
-                   label: Text("Abonar", 
-                   style: TextStyle(color: Colors.white),
-                   ),
-                   icon: Icon(Icons.swap_horizontal_circle_rounded, size: 18, color: Colors.white,),
-                   
-                 ),
-                 // ignore: deprecated_member_use
-                 RaisedButton.icon(
-                   color: colorPrincipal,
-                   shape: RoundedRectangleBorder(
-                            
-  borderRadius: BorderRadius.circular(10.0),
-  side: BorderSide(color: Colors.transparent)
-),
-                   onPressed: (){
-                     _liquidarCuenta();
-                   },
-                   label: Text("Liquidar", 
-                   style: TextStyle(color: Colors.white),
-                   ),
-                   icon: Icon(Icons.update, size: 18, color: Colors.white,),
-                   
-                 ),
-               ],
-             )
-           ),
+           
            Container(
              height: MediaQuery.of(context).size.height*0.05,
              margin: EdgeInsets.all(10),
@@ -378,170 +331,49 @@ class _DetallesClientesState extends State<DetallesClientes> {
     );
   }
 
-Future<void> _abonarCapital() async {
-  
-  return showDialog<void>(
-    builder: (context) => StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return AlertDialog(
-          title: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Abonar A Capital', 
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold
-          ),
-          ),
-              ],
-            ),
-          ),
-          
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                
-                Text('Saldo Actual: \$${f.format(totalabono)}'),
-                SizedBox(height: 8,),
-                _buildTextFieldCantidad(
-                        Icons.attach_money, "Abono", _abonarController),
-                        
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(left: 10, right: 10),
-              child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // ignore: deprecated_member_use
-                FlatButton.icon(
-              color: colorPrincipal,
-              label: Text('Acceptar', style: TextStyle(color: Colors.white)),
-              icon: Icon(Icons.check, size: 18, color: Colors.white,),
-              onPressed: () {
-                
-                restante = totalabono-double.parse(_abonarController.text);
-                
-               FirebaseFirestore.instance.collection("Clientes").doc("${widget.id}").update({"Deuda": restante});
-               setState((){
-                 _abonarController.text="";
-                restante=0;
-               });
-                Navigator.of(context).pop();
-              },
-            ),
-            
-            // ignore: deprecated_member_use
-            FlatButton.icon(
-              color: colorPrincipal,
-              label: Text('Cancelar', style: TextStyle(color: Colors.white)),
-              icon: Icon(Icons.cancel, size: 18, color: Colors.white,),
-              onPressed: () {
-                
-                Navigator.of(context).pop();
-              },
-            ),
-              ],
-            )
-            )
-          ],
-        );
-      },
-      ), context: context,
-    barrierDismissible: false,
-  );
-}
 
-Future<void> _liquidarCuenta() async {
-  
-  return showDialog<void>(
-    builder: (context) => StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return AlertDialog(
-          title: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Liquidar Cuenta', 
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold
-          ),
-          ),
-              ],
-            ),
-          ),
+_buildListItem(DocumentSnapshot doc) {
+
+  dynamic restante;
+
+  restante = doc.data()['Total'] - doc.data()['Abonado'];
+
+    return 
+    InkWell(
+      child: 
+    Padding(
+              padding: EdgeInsets.all(5.0),
+   child: Container(
+     height: MediaQuery.of(context).size.height*0.1,
+     width: MediaQuery.of(context).size.width*0.4,
+     color: colorPrincipal,
+     child: Column(
+       mainAxisAlignment: MainAxisAlignment.spaceAround,
+       children: [
+         Text("${doc.data()['FechaVenta']}",
+         style: TextStyle(
+           color: Colors.white,
+           fontSize: 14,
+           fontWeight: FontWeight.bold
+         ),
+         ),
+         Text("Restante: \$"+f.format(restante),
+         style: TextStyle(
+           color: Colors.white,
+           fontSize: 12,
+           fontWeight: FontWeight.bold
+         ),
+         )
+       ],
+     ),
+   )),
+   onTap: (){
+     _abonarCapital( restante, doc.data()['Abonado'], doc.id.toString());
+   },
+   );
           
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                
-                Container(
-                  child: Text('La cuenta quedará liquidada por completo\n¿Esta de Acuerdo?',
-                style: TextStyle(
-            color: Colors.black,
-            fontSize: 15,
-            
-          ),
-                ),
-                )
-                
-                        
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(left: 10, right: 10),
-              child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // ignore: deprecated_member_use
-                FlatButton.icon(
-              color: colorPrincipal,
-              label: Text('Acceptar', style: TextStyle(color: Colors.white)),
-              icon: Icon(Icons.check, size: 18, color: Colors.white,),
-              onPressed: () {
-                
-               FirebaseFirestore.instance.collection("Clientes").doc("${widget.id}").update({"Deuda": 0});
-               setState((){
-                 _abonarController.text="";
-               });
-                Navigator.of(context).pop();
-              },
-            ),
-            
-            // ignore: deprecated_member_use
-            FlatButton.icon(
-              color: colorPrincipal,
-              label: Text('Cancelar', style: TextStyle(color: Colors.white)),
-              icon: Icon(Icons.cancel, size: 18, color: Colors.white,),
-              onPressed: () {
-                
-                Navigator.of(context).pop();
-              },
-            ),
-              ],
-            )
-            )
-          ],
-        );
-      },
-      ), context: context,
-    barrierDismissible: false,
-  );
-}
+    
+  }
 
 
 buildAlert(BuildContext context)
@@ -585,6 +417,120 @@ buildAlert(BuildContext context)
     direction: YudizModalSheetDirection.BOTTOM);
   }
 
+ Future<void> _abonarCapital(dynamic total, dynamic faltante, String doc) async {
+  print(doc);
+  return showDialog<void>(
+    builder: (context) => StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return AlertDialog(
+          title: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Abonar A Capital', 
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold
+          ),
+          ),
+              ],
+            ),
+          ),
+          
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                
+                Text('Saldo Actual: \$${f.format(total)}'),
+                SizedBox(height: 8,),
+                _buildTextFieldCantidad(
+                        Icons.attach_money, "Abono", _abonarController),
+                        
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(left: 10, right: 10),
+              child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // ignore: deprecated_member_use
+                FlatButton.icon(
+              color: colorPrincipal,
+              label: Text('Acceptar', style: TextStyle(color: Colors.white)),
+              icon: Icon(Icons.check, size: 18, color: Colors.white,),
+              onPressed: () {
+                
+                restante = faltante+double.parse(_abonarController.text);
+                
+               FirebaseFirestore.instance.collection("Ventas").doc(doc).update({"Abonado": restante});
+               setState((){
+                 _abonarController.text="";
+                restante=0;
+               });
+                Navigator.of(context).pop();
+              },
+            ),
+            
+            // ignore: deprecated_member_use
+            FlatButton.icon(
+              color: colorPrincipal,
+              label: Text('Cancelar', style: TextStyle(color: Colors.white)),
+              icon: Icon(Icons.cancel, size: 18, color: Colors.white,),
+              onPressed: () {
+                
+                Navigator.of(context).pop();
+              },
+            ),
+              ],
+            )
+            )
+          ],
+        );
+      },
+      ), context: context,
+    barrierDismissible: false,
+  );
+}
+
+
+_buildTextFieldCantidad( IconData icon, String labelText, TextEditingController controllerPr)
+  {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: colorPrincipal)
+      ),
+      child: TextField(
+        keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+        inputFormatters: [
+                                    FilteringTextInputFormatter.deny(
+                                        new RegExp('[\\-|\\ ]'))
+                                  ],
+
+        controller: controllerPr,
+        style: TextStyle(color: Colors.black),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+          labelText: labelText,
+          border: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
+          labelStyle: TextStyle(color: colorPrincipal),
+          icon: Icon(icon, color: colorPrincipal),
+        ),
+      ),
+    );
+  }
   buildAlertCorrecto(BuildContext context)
   {
     YudizModalSheet.show(
@@ -627,38 +573,6 @@ buildAlert(BuildContext context)
   }
 
 
-_buildTextFieldCantidad( IconData icon, String labelText, TextEditingController controllerPr)
-  {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: colorPrincipal)
-      ),
-      child: TextField(
-        keyboardType: TextInputType.numberWithOptions(
-                                      decimal: true),
-        inputFormatters: [
-                                    FilteringTextInputFormatter.deny(
-                                        new RegExp('[\\-|\\ ]'))
-                                  ],
 
-        controller: controllerPr,
-        style: TextStyle(color: Colors.black),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-          labelText: labelText,
-          border: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-          labelStyle: TextStyle(color: colorPrincipal),
-          icon: Icon(icon, color: colorPrincipal),
-        ),
-      ),
-    );
-  }
-  
 
 }
