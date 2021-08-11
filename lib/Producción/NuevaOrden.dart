@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:paleteria_marfel/Login/Login.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
@@ -90,49 +91,53 @@ class _NuevaOrdenState extends State<NuevaOrden> {
                           ),
                           selectedCurrency1 == null
                               ? SizedBox()
-                              : Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.53,
-                                  margin: EdgeInsets.only(left: 20, right: 20),
-                                  child: ListView(
-                                    children: [
-                                      Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.05,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Productos",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            FlatButton.icon(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    productos.clear();
-                                                  });
-                                                },
-                                                icon: Icon(Icons.delete,
-                                                    color: Colors.red.shade700),
-                                                label: Text(
-                                                  "Borrar",
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ))
-                                          ],
+                              : Expanded(
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                        left: 20, right: 20, bottom: 70),
+                                    child: ListView(
+                                      children: [
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.05,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Productos",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              FlatButton.icon(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      productos.clear();
+                                                    });
+                                                  },
+                                                  icon: Icon(Icons.delete,
+                                                      color:
+                                                          Colors.red.shade700),
+                                                  label: Text(
+                                                    "Borrar",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ))
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      for (var i in productos.keys)
-                                        _moldesCard(context, i),
-                                    ],
+                                        for (var i in productos.keys)
+                                          _moldesCard(context, i),
+                                      ],
+                                    ),
                                   ),
                                 ),
                         ],
@@ -801,9 +806,6 @@ class _NuevaOrdenState extends State<NuevaOrden> {
   Widget _cardInfo(String medida, String nombre) {
     return InkWell(
       onTap: () {
-        productos.forEach((key, value) {
-          print(key);
-        });
         setState(() {
           productos[nombre][medida]++;
         });
@@ -827,8 +829,20 @@ class _NuevaOrdenState extends State<NuevaOrden> {
             Container(
               color: Colors.deepPurple,
               alignment: Alignment.center,
-              child: Text(productos[nombre][medida].toString()),
-              width: MediaQuery.of(context).size.width * .07,
+              child: TextField(
+                onChanged: (numSub) {
+                  setState(() {
+                    productos[nombre][medida] = int.parse(numSub);
+                  });
+                },
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                decoration: InputDecoration(
+                    hintText: productos[nombre][medida].toString()),
+              ),
+              width: MediaQuery.of(context).size.width * .09,
               height: MediaQuery.of(context).size.width * .07,
             ),
           ],
