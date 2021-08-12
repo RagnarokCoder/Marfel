@@ -219,8 +219,8 @@ class _AgregarCompraState extends State<AgregarCompra> {
                        "Dia": DateTime.now().day,
                        "Año": DateTime.now().year,
                        "Pendiente": true,
-                       "Usuario": widget.usuario
-                       
+                       "Usuario": widget.usuario,
+                       "Date": DateTime.now(),
                        
                      }).then((value) => {
                         buildAlertCorrecto(context),

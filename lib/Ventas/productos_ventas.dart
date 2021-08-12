@@ -267,6 +267,7 @@ class CardMolde extends StatelessWidget {
   getPrices(String molde) async {
     var d;
     CollectionReference ref = FirebaseFirestore.instance.collection("Precios");
+    // ignore: unused_local_variable
     var doc = await ref.where("nombre", isEqualTo: molde).get().then((value) {
       if (value.docs.isEmpty) {
         print("a" + value.docs.toString());

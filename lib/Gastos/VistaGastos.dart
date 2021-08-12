@@ -318,118 +318,7 @@ class _VistaGastosState extends State<VistaGastos> {
     );
     
   }
-  //Builder Extraordinario
-  // ignore: unused_element
-  _buildGastoExtraordinario() {
-
-    return Padding(
-      padding: EdgeInsets.all(7.0),
-      child: Container(
-        decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30.0),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    offset: Offset(0.0, 1.0), //(x,y)
-                    blurRadius: 6.0,
-                  ),
-                ],
-              ),
-        height: MediaQuery.of(context).size.height*0.20,
-
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.white,
-              ),
-              margin: EdgeInsets.all(5),
-              height: MediaQuery.of(context).size.height*0.05,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text("Gasto Extraordinario Detectado",
-                   style: TextStyle(
-                     color: Colors.black,
-                     fontSize: 18,
-                     fontWeight: FontWeight.bold
-                   ),
-                   ),
-                ],
-              )
-            ),
-            Container(
-              color: Colors.white,
-              
-              height: MediaQuery.of(context).size.height*0.1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-      height: MediaQuery.of(context).size.height*0.08,
-      width: MediaQuery.of(context).size.width*0.18,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(
-              'assets/warning_icon.png'),
-          fit: BoxFit.fill,
-        ),
-        
-      ),
-    ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text("Congelador whirlpool 7 pies",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade600
-                      ),
-                      ),
-                      Text("\$18,000",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade600
-                      ),
-                      ),
-                      
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Colors.white,
-              ),
-              
-              height: MediaQuery.of(context).size.height*0.03,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text("26/03/21",
-                   style: TextStyle(
-                    color: Colors.grey.shade600,
-                     fontSize: 16,
-                     fontWeight: FontWeight.bold
-                   ),
-                   ),
-                ],
-              )
-            ),
-          ],
-        ),
-       
-      )
-      
-    );
-    
-  }
-
+  
 
 
   buildAlert(BuildContext context)
@@ -482,7 +371,9 @@ class _VistaGastosState extends State<VistaGastos> {
                                             "Nombre": _nombreController.text,
                                             "Cantidad": double.parse(_cantidadController.text),
                                             "TipoGasto": tipoGasto,
-                                            "Usuario": widget.usuario
+                    
+                                            "Usuario": widget.usuario,
+                                            "Date": DateTime.now(),
                                           }).then((value) {
                                             _nombreController.text="";
                                             _cantidadController.text="";
