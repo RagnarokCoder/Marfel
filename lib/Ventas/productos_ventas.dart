@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 List carrito = [];
+Map<String, dynamic> precios = {};
 
 class SalesProducts extends StatefulWidget {
   final String categoria;
@@ -32,6 +33,7 @@ class _SalesProductsState extends State<SalesProducts> {
   void initState() {
     super.initState();
     setCarrito();
+    getPrices();
   }
 
   @override
@@ -119,6 +121,22 @@ class _SalesProductsState extends State<SalesProducts> {
         ],
       ),
     );
+  }
+
+  getPrices() async {
+    print("object");
+    CollectionReference ref = FirebaseFirestore.instance.collection("Molde");
+
+    var doc = await ref.get();
+
+    doc.docs.forEach((element) {
+      precios.addAll({
+        element.id: {
+          "Mayoreo": element.data()["mayoreo"],
+          "Menudeo": element.data()["menudeo"]
+        }
+      });
+    });
   }
 
   buildCarrito(BuildContext context) {
@@ -253,7 +271,7 @@ class CardMolde extends StatelessWidget {
         'img': img,
         'molde': molde,
         'count': 1,
-        'price': 1.0,
+        'price': precios[molde]["Mayoreo"],
         'max': max,
         'id': id
       });
@@ -263,6 +281,7 @@ class CardMolde extends StatelessWidget {
     await prefs.setString('carrito', carr);
     print(prefs.getString('carrito'));
   }
+<<<<<<< HEAD
 
   getPrices(String molde) async {
     var d;
@@ -278,4 +297,6 @@ class CardMolde extends StatelessWidget {
       return d;
     });
   }
+=======
+>>>>>>> 53ca6027406754bf1c0d9841ab6fe1e7a17dde61
 }

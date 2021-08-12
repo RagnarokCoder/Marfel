@@ -598,13 +598,16 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
                               fontSize: 13,
                               fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          "Maxi: " + f.format(doc.data()['Maxi']).toString(),
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold),
-                        )
+                        doc.data()["Maxi"] != null
+                            ? Text(
+                                "Maxi: " +
+                                    f.format(doc.data()['Maxi']).toString(),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : SizedBox(),
                       ],
                     )),
                 Text(
