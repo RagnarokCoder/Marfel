@@ -250,7 +250,7 @@ class _CardOrden extends StatefulWidget {
       : super(key: key);
   final Function delete;
   final Function state;
-  final double price;
+  final dynamic price;
   final int counter;
   final int max;
   final String name;

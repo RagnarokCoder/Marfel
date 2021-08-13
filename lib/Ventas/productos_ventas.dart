@@ -112,8 +112,8 @@ class _SalesProductsState extends State<SalesProducts> {
                           title: doc.data()['NombreProducto'],
                           molde: doc.data()['Molde'],
                           id: doc.id,
-                          img:
-                              'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
+                          img:'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg'
+                              );
                     },
                   );
                 }),
@@ -252,6 +252,9 @@ class CardMolde extends StatelessWidget {
             Container(
                 margin: EdgeInsets.only(bottom: width * .05),
                 child: Text(molde)),
+                Container(
+                
+                child: Text("Pieza(s) "+max.toString())),
           ],
         ),
       ),
@@ -281,22 +284,4 @@ class CardMolde extends StatelessWidget {
     await prefs.setString('carrito', carr);
     print(prefs.getString('carrito'));
   }
-<<<<<<< HEAD
-
-  getPrices(String molde) async {
-    var d;
-    CollectionReference ref = FirebaseFirestore.instance.collection("Precios");
-    // ignore: unused_local_variable
-    var doc = await ref.where("nombre", isEqualTo: molde).get().then((value) {
-      if (value.docs.isEmpty) {
-        print("a" + value.docs.toString());
-      }
-      print("b" + value.docs[0]["mayoreo"].toString());
-      d = value.docs[0]["mayoreo"];
-      print(d);
-      return d;
-    });
-  }
-=======
->>>>>>> 53ca6027406754bf1c0d9841ab6fe1e7a17dde61
 }

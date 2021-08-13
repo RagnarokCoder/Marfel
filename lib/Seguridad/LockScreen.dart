@@ -25,9 +25,6 @@ int _start = 60;
 
 class _LockScreenState extends State<LockScreen> {
 
-  
-
-
   void startTimer() {
   const oneSec = const Duration(seconds: 1);
   _timer = new Timer.periodic(
@@ -71,8 +68,6 @@ void dispose() {
              intentos == 3?
              timer():
              _numpad()
-             
-             
            ],
          ),
        ),
@@ -85,7 +80,6 @@ void dispose() {
       child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         var height = constraints.biggest.height / 4;
-
         return Table(
           border: TableBorder.all(
             color: colorPrincipal,
@@ -138,9 +132,6 @@ void dispose() {
                   ),
                 ),
                 onTap: (){
-
-                  
-
                   if(value == 5361)
                     {
                       Navigator.push(

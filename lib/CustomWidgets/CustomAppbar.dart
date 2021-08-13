@@ -9,6 +9,7 @@ import 'package:paleteria_marfel/Graficas/VistaGraficas2.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:paleteria_marfel/Inventario/VistaInventario.dart';
 import 'package:paleteria_marfel/InventarioStock/InventarioMp.dart';
+import 'package:paleteria_marfel/Pedidos/PedidosIda.dart';
 import 'package:paleteria_marfel/Personal/VistaPersonal.dart';
 import 'package:paleteria_marfel/Producci%C3%B3n/VistaProduccion.dart';
 import 'package:paleteria_marfel/Ventas/VistaVentas.dart';
@@ -52,6 +53,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
         widget.usuario.toString() == "$prefix" + "_inventario@marfel.com") {
       tipoAcceso = 3;
       user = "Inventario";
+    }
+    if (widget.usuario.toString().toUpperCase() == "PEDIDOS@MARFEL.COM" ||
+        widget.usuario.toString() == "$prefix" + "_pedidos@marfel.com") {
+      tipoAcceso = 4;
+      user = "Pedidos";
     }
   }
 
@@ -110,7 +116,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
         
         Container(
-            height: MediaQuery.of(context).size.height * 0.81,
+            height: MediaQuery.of(context).size.height * 0.9,
             color: colorPrincipal,
             child: Column(children: <Widget>[
               tipoAcceso == 1 || tipoAcceso == 2
@@ -306,6 +312,25 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     endIndent: 30,
                     thickness: 1.1,
                   ),
+                  tipoAcceso == 1 || tipoAcceso == 4
+                  ? ListTile(
+                      leading: Icon(FontAwesomeIcons.truck, color: Colors.white, size: 20),
+                      title: Text('Pedidos',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: PedidosIda(
+                                  usuario: widget.usuario,
+                                )));
+                      },
+                    )
+                  : SizedBox(),
               SizedBox(
                 height: 25,
               ),
