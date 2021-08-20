@@ -14,6 +14,7 @@ class DetallesProduccion extends StatefulWidget {
 int dia = DateTime.now().day;
 int mes = DateTime.now().month;
 int year = DateTime.now().year;
+dynamic total = 0;
 dynamic totalAgua = 0;
 dynamic totalLeche = 0;
 dynamic totalTambos = 0;
@@ -44,6 +45,7 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
     super.initState();
   }
 
+  bool hasData = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -260,102 +262,9 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
                           },
                         ),
                       ),
-                      widget.categoria == "Paleta"
-                          ? Container(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "\n\nAgua\nLeche",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "Mini\n${f.format(totalmini)}\n${f.format(totalminiL)}",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "Maxi\n${f.format(totalmaxi)}\n0.00",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "Hexa\n${f.format(totalhexa)}\n${f.format(totalhexaL)}",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "Cuad\n${f.format(totalcuad)}\n${f.format(totalcuadL)}",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : widget.categoria == "Helado"
-                              ? Container(
-                                  padding: EdgeInsets.only(left: 10, right: 10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "\n\nAgua\nLeche",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "1L\n${f.format(total1L)}\n${f.format(total1Leche)}",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        "5L\n${f.format(total5L)}\n${f.format(total5Leche)}",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : widget.categoria == "Sandwich" ||
-                                      widget.categoria == "Troles"
-                                  ? Container(
-                                      padding:
-                                          EdgeInsets.only(left: 10, right: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Piezas: ${f.format(totalSa)}",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : SizedBox()
+                      Container(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Text(widget.categoria))
                     ],
                   )),
               Positioned(
@@ -382,6 +291,7 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
                             if (!snapshot.hasData) {
                               return Text("Cargando");
                             }
+                            total = 1;
                             return widget.categoria == "Paleta"
                                 ? Column(
                                     children: snapshot.data.docs
@@ -404,56 +314,6 @@ class _DetallesProduccionState extends State<DetallesProduccion> {
                       ],
                     )),
               ),
-              Positioned(
-                bottom: 0,
-                child: Container(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  width: MediaQuery.of(context).size.width,
-                  child: totalAgua == 0 && totalLeche == 0 && totalTambos == 0
-                      ? Center(
-                          child: Text(
-                            "Seleccione Una Fecha...",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              widget.categoria == "Paleta" ||
-                                      widget.categoria == "Sandwich" ||
-                                      widget.categoria == "Troles"
-                                  ? "Tambos\n${f.format(totalTambos)}"
-                                  : widget.categoria == "Helado"
-                                      ? "Tandas\n${f.format(totalTambos)}"
-                                      : "",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "Leche\n${f.format(totalLeche)}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "Agua\n${f.format(totalAgua)}",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                ),
-              )
             ],
           ),
         ));

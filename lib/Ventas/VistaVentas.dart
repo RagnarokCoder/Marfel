@@ -5,6 +5,7 @@ import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:paleteria_marfel/Ventas/Carrito.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 import 'productos_ventas.dart';
 
 class VistaVentas extends StatefulWidget {
@@ -58,15 +59,7 @@ class _VistaVentasState extends State<VistaVentas> {
                     onTap: () {
                       print(carrito);
                       totalfinal = 0;
-                      showModalBottomSheet(
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: width,
-                              height: height * 6 / 7,
-                              child: Orden(),
-                            );
-                          },
-                          context: context);
+                      buildCarrito(context);
                     },
                   ),
                 ],
@@ -77,6 +70,21 @@ class _VistaVentasState extends State<VistaVentas> {
           usuario: widget.usuario,
         ),
         body: _tableCards());
+  }
+
+  buildCarrito(BuildContext context) {
+    YudizModalSheet.show(
+        context: context,
+        child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            color: Colors.white,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * .66,
+            child: Orden(),
+          );
+        }),
+        direction: YudizModalSheetDirection.BOTTOM);
   }
 
   Widget _tableCards() {
