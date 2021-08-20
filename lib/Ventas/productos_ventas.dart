@@ -59,6 +59,7 @@ class _SalesProductsState extends State<SalesProducts> {
                   itemColor: colorPrincipal,
                   hideZero: true,
                   onTap: () {
+                    print(carrito);
                     buildCarrito(context);
                   },
                 ),
@@ -77,6 +78,7 @@ class _SalesProductsState extends State<SalesProducts> {
                 stream: FirebaseFirestore.instance
                     .collection("Inventario")
                     .where("Molde", isEqualTo: categoria)
+                    .orderBy('Vendidos', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -104,6 +106,7 @@ class _SalesProductsState extends State<SalesProducts> {
                           title: doc.data()['NombreProducto'],
                           img: doc.data()['Imagen'],
                           molde: doc.data()['Molde'],
+                          vendidos: doc.data()['Vendidos'],
                           id: doc.id,
                         );
                       }
@@ -111,6 +114,7 @@ class _SalesProductsState extends State<SalesProducts> {
                           max: doc.data()['Cantidad'],
                           title: doc.data()['NombreProducto'],
                           molde: doc.data()['Molde'],
+                          vendidos: doc.data()['Vendidos'],
                           id: doc.id,
                           img:
                               'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
@@ -124,19 +128,38 @@ class _SalesProductsState extends State<SalesProducts> {
   }
 
   getPrices() async {
-    print("object");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> listClient = [];
+    listClient.add("General");
     CollectionReference ref = FirebaseFirestore.instance.collection("Molde");
 
     var doc = await ref.get();
 
     doc.docs.forEach((element) {
       precios.addAll({
-        element.id: {
+        element['nombre']: {
           "Mayoreo": element.data()["mayoreo"],
           "Menudeo": element.data()["menudeo"]
         }
       });
     });
+    CollectionReference ref2 =
+        FirebaseFirestore.instance.collection("Clientes");
+    var doc2 = await ref2.get();
+    doc2.docs.forEach((element) {
+      listClient.add(element["Nombre"]);
+      Map auxMap = {};
+      auxMap = element['Precios'];
+      auxMap.forEach((key, value) {
+        Map auxMapPrecios;
+        auxMapPrecios = precios[key];
+        auxMapPrecios[element['Nombre']] = value;
+        precios[key] = auxMapPrecios;
+      });
+    });
+    listClient.add("Paquetes");
+    await prefs.setStringList("ListClients", listClient);
+    print(precios);
   }
 
   buildCarrito(BuildContext context) {
@@ -147,7 +170,7 @@ class _SalesProductsState extends State<SalesProducts> {
           return Container(
             color: Colors.white,
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * .6,
+            height: MediaQuery.of(context).size.height * .66,
             child: Orden(),
           );
         }),
@@ -200,7 +223,7 @@ class _SalesProductsState extends State<SalesProducts> {
 
 class CardMolde extends StatelessWidget {
   final String title;
-
+  final int vendidos;
   final String img;
   final String molde;
   final dynamic max;
@@ -211,7 +234,8 @@ class CardMolde extends StatelessWidget {
       @required this.img,
       this.molde,
       @required this.max,
-      this.id})
+      this.id,
+      this.vendidos})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -271,9 +295,12 @@ class CardMolde extends StatelessWidget {
         'img': img,
         'molde': molde,
         'count': 1,
-        'price': precios[molde]["Mayoreo"],
+        'price': precios[molde]["Menudeo"],
+        'prices': precios[molde],
+        'pricemn': precios[molde]["Menudeo"],
         'max': max,
-        'id': id
+        'id': id,
+        'Vendidos': vendidos
       });
     }
 
