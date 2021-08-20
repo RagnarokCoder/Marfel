@@ -10,8 +10,10 @@ import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:paleteria_marfel/Inventario/VistaInventario.dart';
 import 'package:paleteria_marfel/InventarioStock/InventarioMp.dart';
 import 'package:paleteria_marfel/Pedidos/PedidosIda.dart';
+import 'package:paleteria_marfel/Pedidos/PedidosVuelta.dart';
 import 'package:paleteria_marfel/Personal/VistaPersonal.dart';
 import 'package:paleteria_marfel/Producci%C3%B3n/VistaProduccion.dart';
+import 'package:paleteria_marfel/Usuarios/Usuarios.dart';
 import 'package:paleteria_marfel/Ventas/VistaVentas.dart';
 import 'package:provider/provider.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
@@ -58,6 +60,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
         widget.usuario.toString() == "$prefix" + "_pedidos@marfel.com") {
       tipoAcceso = 4;
       user = "Pedidos";
+    }
+    if (widget.usuario.toString().toUpperCase() == "PRODUCCION@MARFEL.COM" ||
+        widget.usuario.toString() == "$prefix" + "_produccion@marfel.com") {
+      tipoAcceso = 5;
+      user = "Produccion";
+    }
+    if (widget.usuario.toString().toUpperCase() == "CONTABILIDAD@MARFEL.COM" ||
+        widget.usuario.toString() == "$prefix" + "_contabilidad@marfel.com") {
+      tipoAcceso = 6;
+      user = "Contabilidad";
     }
   }
 
@@ -222,7 +234,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       },
                     )
                   : SizedBox(),
-              tipoAcceso == 1
+              tipoAcceso == 1 || tipoAcceso == 5
                   ? ListTile(
                       leading: Icon(FontAwesomeIcons.truckLoading, color: Colors.white, size: 20),
                       title: Text('PRODUCCIÓN',
@@ -248,7 +260,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     endIndent: 30,
                     thickness: 1.1,
                   ),
-              tipoAcceso == 1
+              tipoAcceso == 1 || tipoAcceso == 6
                   ? ListTile(
                       leading: Icon(FontAwesomeIcons.chartArea, color: Colors.white, size: 20),
                       title: Text('GRAFICAS',
@@ -321,11 +333,40 @@ class _CustomAppBarState extends State<CustomAppBar> {
                               fontWeight: FontWeight.w900,
                               color: Colors.white)),
                       onTap: () {
+                        tipoAcceso == 1 ?
                         Navigator.push(
                             context,
                             PageTransition(
                                 type: PageTransitionType.rightToLeft,
                                 child: PedidosIda(
+                                  usuario: widget.usuario,
+                                ))):
+                                tipoAcceso == 4?
+                                Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: PedidosVuelta(
+                                  usuario: widget.usuario,
+                                ))):SizedBox();
+
+                      },
+                    )
+                  : SizedBox(),
+                  tipoAcceso == 1
+                  ? ListTile(
+                      leading: Icon(FontAwesomeIcons.userAlt, color: Colors.white, size: 20),
+                      title: Text('Usuarios',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: Usuarios(
                                   usuario: widget.usuario,
                                 )));
                       },
@@ -371,7 +412,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 style: (TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+                    color: Colors.black)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -390,7 +431,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       ),
                       label: Text(
                         "Confirmar",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.black),
                       )),
                 ],
               )

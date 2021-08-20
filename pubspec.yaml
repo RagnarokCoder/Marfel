@@ -43,11 +43,10 @@ dependencies:
   flutter_datetime_picker:
   flutter_zoom_drawer:
   provider:
-  slide_to_confirm:
   icon_badge:
   firebase_auth: ^0.20.1
   marquee_widget:
-
+  slide_to_confirm:
   shared_preferences:
 
 
