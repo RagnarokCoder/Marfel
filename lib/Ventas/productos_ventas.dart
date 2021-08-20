@@ -116,8 +116,8 @@ class _SalesProductsState extends State<SalesProducts> {
                           molde: doc.data()['Molde'],
                           vendidos: doc.data()['Vendidos'],
                           id: doc.id,
-                          img:
-                              'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
+                          img:'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg'
+                              );
                     },
                   );
                 }),
@@ -276,6 +276,9 @@ class CardMolde extends StatelessWidget {
             Container(
                 margin: EdgeInsets.only(bottom: width * .05),
                 child: Text(molde)),
+                Container(
+                
+                child: Text("Pieza(s) "+max.toString())),
           ],
         ),
       ),

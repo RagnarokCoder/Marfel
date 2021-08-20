@@ -44,7 +44,8 @@ class _VistaInventarioState extends State<VistaInventario> {
               'Inventario',
               style: TextStyle(color: Colors.white, fontSize: 18),
             ),
-            
+            SizedBox(),
+            SizedBox()
           ],
         ),
         

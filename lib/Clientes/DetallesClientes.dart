@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:paleteria_marfel/Clientes/VistaClientes.dart';
-import 'package:paleteria_marfel/Gastos/VistaGastos.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
@@ -208,7 +207,8 @@ class _DetallesClientesState extends State<DetallesClientes> {
                  StreamBuilder<QuerySnapshot>(
                           
             stream: FirebaseFirestore.instance.collection('Ventas')
-            .where("Pendiente", isEqualTo: true)
+            .where("Pendiente", isEqualTo: true).
+            where("Cliente.Nombre", isEqualTo: widget.nombre)
             .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -337,7 +337,10 @@ _buildListItem(DocumentSnapshot doc) {
   dynamic restante;
 
   restante = doc.data()['Total'] - doc.data()['Abonado'];
-
+  if(doc.data()['Total'] == doc.data()['Abonado'])
+                {
+                  FirebaseFirestore.instance.collection("Ventas").doc(doc.id).update({"Pendiente": false});
+                }
     return 
     InkWell(
       child: 
@@ -368,7 +371,7 @@ _buildListItem(DocumentSnapshot doc) {
      ),
    )),
    onTap: (){
-     _abonarCapital( restante, doc.data()['Abonado'], doc.id.toString());
+     _abonarCapital( restante, doc.data()['Abonado'], doc.id.toString(), doc.data()['Total']);
    },
    );
           
@@ -417,8 +420,9 @@ buildAlert(BuildContext context)
     direction: YudizModalSheetDirection.BOTTOM);
   }
 
- Future<void> _abonarCapital(dynamic total, dynamic faltante, String doc) async {
+ Future<void> _abonarCapital(dynamic total, dynamic faltante, String doc, dynamic totalActual) async {
   print(doc);
+  bool error = false;
   return showDialog<void>(
     builder: (context) => StatefulBuilder(
       builder: (BuildContext context, StateSetter setState) {
@@ -453,6 +457,23 @@ buildAlert(BuildContext context)
             ),
           ),
           actions: <Widget>[
+            error == true ?
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(left: 10, right: 10),
+              child: Center(
+                child: FlatButton.icon(
+              color: colorPrincipal,
+              label: Text('Error!', style: TextStyle(color: Colors.white)),
+              icon: Icon(Icons.cancel, size: 18, color: Colors.white,),
+              onPressed: () {
+                setState((){
+                 error = false;
+               });
+              },
+            ),
+              ),
+            ):
             Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.only(left: 10, right: 10),
@@ -462,18 +483,25 @@ buildAlert(BuildContext context)
                 // ignore: deprecated_member_use
                 FlatButton.icon(
               color: colorPrincipal,
-              label: Text('Acceptar', style: TextStyle(color: Colors.white)),
+              label: Text('Aceptar', style: TextStyle(color: Colors.white)),
               icon: Icon(Icons.check, size: 18, color: Colors.white,),
               onPressed: () {
+                if(double.parse(_abonarController.text) > total )
+                {
+                  error = true;
+                  _abonarController.text="";
+                }
+                else
+                {
+                  restante = faltante+double.parse(_abonarController.text);
+                  FirebaseFirestore.instance.collection("Ventas").doc(doc).update({"Abonado": restante});
+                  setState((){
+                  _abonarController.text="";
+                  restante=0;
+                  });
+                  Navigator.of(context).pop();
+                }
                 
-                restante = faltante+double.parse(_abonarController.text);
-                
-               FirebaseFirestore.instance.collection("Ventas").doc(doc).update({"Abonado": restante});
-               setState((){
-                 _abonarController.text="";
-                restante=0;
-               });
-                Navigator.of(context).pop();
               },
             ),
             

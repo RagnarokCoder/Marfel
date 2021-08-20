@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:paleteria_marfel/Menu/PantallaInicio.dart';
+import 'package:paleteria_marfel/Seguridad/LockScreen.dart';
 import 'FirebaseAuth/Authentication_Service.dart';
 import 'Login/Login.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +43,7 @@ class AuthenticationWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
-      return PantallaInicio(
+      return LockScreen(
         usuario: firebaseUser.email.toString(),
       );
     }

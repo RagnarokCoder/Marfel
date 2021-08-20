@@ -335,7 +335,7 @@ class _InventarioMpState extends State<InventarioMp> {
                         fontWeight: FontWeight.bold),
                   ),
                   ConfirmationSlider(
-                    sliderButtonContent: Icon(Icons.arrow_right_alt),
+                    
                     iconColor: colorPrincipal,
                     backgroundColor: colorPrincipal,
                     backgroundColorEnd: Colors.white,
