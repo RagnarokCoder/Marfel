@@ -11,6 +11,7 @@ import 'package:paleteria_marfel/Inventario/VistaInventario.dart';
 import 'package:paleteria_marfel/InventarioStock/InventarioMp.dart';
 import 'package:paleteria_marfel/Pedidos/PedidosIda.dart';
 import 'package:paleteria_marfel/Pedidos/PedidosVuelta.dart';
+import 'package:paleteria_marfel/Perfil/Perfil.dart';
 import 'package:paleteria_marfel/Personal/VistaPersonal.dart';
 import 'package:paleteria_marfel/Producci%C3%B3n/VistaProduccion.dart';
 import 'package:paleteria_marfel/Usuarios/Usuarios.dart';
@@ -128,7 +129,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
         
         Container(
-            height: MediaQuery.of(context).size.height * 0.9,
+            height: MediaQuery.of(context).size.height+200,
             color: colorPrincipal,
             child: Column(children: <Widget>[
               tipoAcceso == 1 || tipoAcceso == 2
@@ -355,7 +356,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   : SizedBox(),
                   tipoAcceso == 1
                   ? ListTile(
-                      leading: Icon(FontAwesomeIcons.userAlt, color: Colors.white, size: 20),
+                      leading: Icon(FontAwesomeIcons.users, color: Colors.white, size: 20),
                       title: Text('Usuarios',
                           style: TextStyle(
                               fontSize: 15,
@@ -367,6 +368,25 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             PageTransition(
                                 type: PageTransitionType.rightToLeft,
                                 child: Usuarios(
+                                  usuario: widget.usuario,
+                                )));
+                      },
+                    )
+                  : SizedBox(),
+                  tipoAcceso == 1
+                  ? ListTile(
+                      leading: Icon(FontAwesomeIcons.userAlt, color: Colors.white, size: 20),
+                      title: Text('Perfil',
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white)),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: Perfil(
                                   usuario: widget.usuario,
                                 )));
                       },

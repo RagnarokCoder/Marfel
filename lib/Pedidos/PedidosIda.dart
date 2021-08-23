@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:icon_badge/icon_badge.dart';
+import 'package:intl/intl.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
+import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 
 
@@ -27,6 +29,7 @@ List<String> nombresCarrito = [];
 List<dynamic> cantidadItem = [];
 Map<String, dynamic> productos = {};
 bool body = false;
+int dia, mes, year;
 
 class _PedidosIdaState extends State<PedidosIda> {
 
@@ -193,10 +196,49 @@ class _PedidosIdaState extends State<PedidosIda> {
                     padding: EdgeInsets.all(5),
                     child: ListView(
                       children: [
+                        Container(
+                  height: 40.0,
+                  width: 40.0,
+                  
+                  child: Center(
+                    child: IconButton(icon: Icon(Icons.date_range, color: Colors.black), onPressed: ()
+                    {
+                      showDatePicker(context: context, initialDate: DateTime.now(), 
+                                   helpText: "Seleccione una fecha",
+                                    builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.dark().copyWith(
+                colorScheme: ColorScheme.dark(
+                    primary: Colors.white, //color botones
+                    onPrimary: colorPrincipal,
+                    surface: colorPrincipal.withOpacity(0.5),
+                    onSurface: Colors.white,
+                    
+                    ),
+                dialogBackgroundColor: colorPrincipal,
+                buttonColor: Colors.white,
+                
+              ),
+              child: child,
+            );
+            
+          },
+                                   firstDate: DateTime(2001), lastDate: DateTime(2222)).then((date){
+                                   dia =  int.parse(DateFormat('dd').format(date));
+                                   mes  = int.parse(DateFormat('MM').format(date));
+                                   year = int.parse(DateFormat('yyyy').format(date));
+                                   setState(() {
+                                     
+                                   });  
+                                   });    
+
+                    }),
+                  ),
+                ),
                         StreamBuilder<QuerySnapshot>(
                           
             stream: FirebaseFirestore.instance.collection('Pedidos')
-            .where("Pendiente", isEqualTo: true)
+            .where('Dia', isEqualTo: dia).where('Mes', isEqualTo: mes).where('Año', isEqualTo: year)
             .snapshots(),
             builder: (context, snapshot) {
               return Column(children: snapshot.data.docs.map<Widget>((doc) => _buildStatusPedidos(doc)).toList());
@@ -847,6 +889,10 @@ class _PedidosIdaState extends State<PedidosIda> {
     {
       status = "Terminado";
     }
+    if(status == null)
+    {
+      status = "En Inventario";
+    }
 
 
     return Container(
@@ -877,6 +923,7 @@ class _PedidosIdaState extends State<PedidosIda> {
             ),
             )
           ),
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -886,7 +933,7 @@ class _PedidosIdaState extends State<PedidosIda> {
               status == "Pendiente" ? Colors.red.shade700:
               status == "En Proceso" ? Colors.yellow.shade700:
               status == "En Camino" ? Colors.blue.shade700:
-              status == "Terminado" ? Colors.green.shade700:Colors.white
+              status == "Terminado" ? Colors.green.shade700:Colors.purple.shade700
               ),
               SizedBox(
                 width: 8,
@@ -1012,6 +1059,36 @@ class _PedidosIdaState extends State<PedidosIda> {
               ),
               )
             ),
+            status == "Terminado"?
+            ConfirmationSlider(
+                    text: "Agregar a Inventario",
+                    textStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12
+                    ),
+                    foregroundColor: colorPrincipal,
+                    onConfirmation: (){
+                      auxMap.forEach((key, value) { 
+                        DocumentReference documentReference =
+                FirebaseFirestore.instance.collection("Inventario").doc(key);
+            documentReference.get().then((datasnapshot) {
+              if (datasnapshot.exists) {
+                print(datasnapshot.data()['Cantidad'].toString());
+                dynamic agregarCantidad = datasnapshot.data()['Cantidad'] + auxMap[key]['Piezas'];
+                FirebaseFirestore.instance.collection("Inventario").doc(key).update({"Cantidad": agregarCantidad});
+                FirebaseFirestore.instance.collection("Pedidos").doc(doc.id).update({"Terminado": null});
+              }
+              else{
+                print("No Existe");
+              }
+            });
+
+                      });
+                      
+                      Navigator.of(context).pop();
+                    },
+                  ): 
              Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

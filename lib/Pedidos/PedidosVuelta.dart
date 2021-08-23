@@ -261,12 +261,12 @@ class _PedidosVueltaState extends State<PedidosVuelta> {
              Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                
+                doc.data()['Terminado'] != true ?
                 ConfirmationSlider(
                     text: 
                     doc.data()['Pendiente'] != null ? "Comenzar Pedido":
                     doc.data()['En Proceso'] != null ?"Enviar Pedido":
-                    doc.data()['En Camino'] != null ?"Finalizar Pedido":"Agregar a Inventario",
+                    doc.data()['En Camino'] != null ?"Finalizar Pedido":"",
                     textStyle: TextStyle(
                       color: Colors.blueGrey,
                       fontWeight: FontWeight.bold,
@@ -288,26 +288,11 @@ class _PedidosVueltaState extends State<PedidosVuelta> {
                       FirebaseFirestore.instance.collection("Pedidos").doc(doc.id).update({
                         "En Camino": null,
                         "Terminado": true
-                      }):
-                      auxMap.forEach((key, value) { 
-                        DocumentReference documentReference =
-                FirebaseFirestore.instance.collection("Inventario").doc(key);
-            documentReference.get().then((datasnapshot) {
-              if (datasnapshot.exists) {
-                print(datasnapshot.data()['Cantidad'].toString());
-                dynamic agregarCantidad = datasnapshot.data()['Cantidad'] + auxMap[key]['Piezas'];
-                FirebaseFirestore.instance.collection("Inventario").doc(key).update({"Cantidad": agregarCantidad});
-                FirebaseFirestore.instance.collection("Pedidos").doc(doc.id).update({"Terminado": null});
-              }
-              else{
-                print("No Existe");
-              }
-            });
-
-                      });
+                      }):SizedBox();
+                      
                       Navigator.of(context).pop();
                     },
-                  ) 
+                  ):SizedBox() 
               ],
             ), 
           ],
