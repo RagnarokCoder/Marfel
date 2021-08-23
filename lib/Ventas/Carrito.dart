@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
@@ -29,22 +30,55 @@ class _OrdenState extends State<Orden> {
     return total;
   }
 
+  int drop1 = 0;
+  String cliente;
+  List clientes;
   @override
   void initState() {
     super.initState();
     setCarrito();
   }
 
+  var pendiente = false;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
+        SizedBox(
+          height: 1,
+        ),
         Row(
           children: [
             Container(margin: EdgeInsets.only(left: 10), child: Text('Orden:')),
+            Spacer(),
+            Flexible(
+              flex: 3,
+              fit: FlexFit.loose,
+              child: CustomDropdown(
+                borderRadius: 10,
+                enabledColor: colorPrincipal,
+                disabledIconColor: Colors.white,
+                enabledIconColor: Colors.white,
+                enableTextColor: Colors.white,
+                elementTextColor: Colors.white,
+                openColor: colorPrincipal,
+                valueIndex: drop1,
+                hint: "Cliente",
+                items: [
+                  for (var i in clientes) CustomDropdownItem(text: i),
+                ],
+                onChanged: (newValue) {
+                  setState(() => drop1 = newValue);
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    setState(() {});
+                  });
+                },
+              ),
+            ),
             Spacer(),
             Container(
               margin: EdgeInsets.only(right: 10),
@@ -68,24 +102,26 @@ class _OrdenState extends State<Orden> {
           child: ListView.builder(
             itemCount: carrito.length,
             itemBuilder: (BuildContext context, int index) {
-              return _CardOrden(
-                  delete: () {
-                    setState(() {
-                      delete(carrito[index]['molde'], carrito[index]['nombre']);
-                    });
-                  },
-                  state: () {
-                    setState(() {
-                      getTotal;
-                    });
-                  },
-                  max: carrito[index]['max'],
-                  counter: carrito[index]['count'],
-                  name: carrito[index]['nombre'],
-                  molde: carrito[index]['molde'],
-                  price: carrito[index]['price'],
-                  imagen: carrito[index]['img'],
-                  id: carrito[index]['id']);
+              return cardItem(
+                delete: () {
+                  setState(() {
+                    delete(carrito[index]['molde'], carrito[index]['nombre']);
+                  });
+                },
+                state: () {
+                  setState(() {
+                    getTotal;
+                  });
+                },
+                context: context,
+                min: 1,
+                max: carrito[index]['max'],
+                counter: carrito[index]['count'],
+                name: carrito[index]['nombre'],
+                molde: carrito[index]['molde'],
+                price: carrito[index]['price'],
+                imagen: carrito[index]['img'],
+              );
             },
           ),
         ),
@@ -94,6 +130,25 @@ class _OrdenState extends State<Orden> {
           margin: EdgeInsets.all(10),
           child: Row(
             children: [
+              (drop1 != 0 && drop1 != (clientes.length - 1))
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("pendiente"),
+                        Container(
+                          width: width * .3,
+                          child: SwitchListTile(
+                              title: Container(
+                                  child: FittedBox(
+                                      fit: BoxFit.fill, child: Text('N/S'))),
+                              value: pendiente,
+                              onChanged: (data) {
+                                setState(() => pendiente = data);
+                              }),
+                        ),
+                      ],
+                    )
+                  : SizedBox(),
               Spacer(),
               Text(
                 'Total:',
@@ -103,27 +158,45 @@ class _OrdenState extends State<Orden> {
                 width: width * .01,
               ),
               Text(
-                '\$$getTotal',
+                '\$' + getTotal.toString(),
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Spacer(),
-              InkWell(
-                onTap: () {
-                  _mostrarAlert(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(right: width * .04),
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: colorButton),
-                  child: Text(
-                    ' Pagar ',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ),
+              drop1 == (clientes.length - 1)
+                  ? InkWell(
+                      onTap: () {
+                        _mostrarAlert(context);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: width * .04),
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: colorButton),
+                        child: Text(
+                          ' Crear Paquete ',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        _mostrarAlert(context);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: width * .04),
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: colorButton),
+                        child: Text(
+                          ' Pagar ',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
             ],
           ),
         )
@@ -142,6 +215,17 @@ class _OrdenState extends State<Orden> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text('¿Los articulos estan correctos?'),
+                drop1 != 0
+                    ? Container(
+                        width: 100,
+                        child: SwitchListTile(
+                            title: Text('a'),
+                            value: pendiente,
+                            onChanged: (data) {
+                              setState(() => pendiente = data);
+                            }),
+                      )
+                    : SizedBox(),
               ],
             ),
             actions: [
@@ -172,6 +256,7 @@ class _OrdenState extends State<Orden> {
       if (prefs.getString('carrito') == null) prefs.setString('carrito', '[]');
       carrito = json.decode(prefs.getString('carrito'));
     });
+    clientes = prefs.getStringList("ListClients");
   }
 
   Future<void> delete(String name, String molde) async {
@@ -194,6 +279,11 @@ class _OrdenState extends State<Orden> {
           .update({'Cantidad': element["max"] - element['count']})
           .then((_) => print('Updated'))
           .catchError((error) => print('Update failed: $error'));
+      collection
+          .doc(element['id'])
+          .update({'Vendidos': element['Vendidos'] + element['count']})
+          .then((_) => print('Updated'))
+          .catchError((error) => print('Update failed: $error'));
     });
     String date = DateTime.now().day.toString() +
         '/' +
@@ -209,9 +299,8 @@ class _OrdenState extends State<Orden> {
       "Date": DateTime.now(),
       "FechaVenta": date,
       "Total": total,
-      "Abonado": 0,
-      "Pendiente": false,
-      "Nombre": 'Juan'
+      "Pendiente": pendiente,
+      "Nombre": clientes[drop1]
     }).then((value) => {
           setState(() {
             carrito = [];
@@ -233,68 +322,70 @@ class _OrdenState extends State<Orden> {
     });
     return carritoAux;
   }
-}
 
-class _CardOrden extends StatefulWidget {
-  const _CardOrden(
-      {Key key,
-      @required this.counter,
-      @required this.delete,
-      @required this.name,
-      @required this.price,
-      @required this.molde,
-      @required this.max,
-      @required this.id,
-      this.state,
-      this.imagen})
-      : super(key: key);
-  final Function delete;
-  final Function state;
-  final dynamic price;
-  final int counter;
-  final int max;
-  final String name;
-  final String id;
-  final String molde;
-  final String imagen;
-
-  @override
-  __CardOrdenState createState() => __CardOrdenState(counter);
-}
-
-class __CardOrdenState extends State<_CardOrden> {
-  __CardOrdenState(this.counter);
-  int counter;
-  @override
-  Widget build(BuildContext context) {
+  Widget cardItem(
+      {BuildContext context,
+      Function delete,
+      int max,
+      int counter,
+      String name,
+      String imagen,
+      String molde,
+      int min,
+      dynamic price,
+      Function state}) {
+    if (drop1 == 0 || drop1 == null) {
+      if (counter >= 30) {
+        int index = carrito.indexWhere((element) =>
+            element.containsValue(name) && element.containsValue(molde));
+        carrito[index]['price'] = carrito[index]['prices']['Mayoreo'];
+      } else if (counter < 30) {
+        int index = carrito.indexWhere((element) =>
+            element.containsValue(name) && element.containsValue(molde));
+        carrito[index]['price'] = carrito[index]['prices']['Menudeo'];
+      }
+    } else {
+      if (counter >= 30) {
+        int index = carrito.indexWhere((element) =>
+            element.containsValue(name) && element.containsValue(molde));
+        carrito[index]['prices'][clientes[drop1]]['Menudeo'] != null
+            ? carrito[index]['price'] =
+                carrito[index]['prices'][clientes[drop1]]['Menudeo']
+            : carrito[index]['price'] = carrito[index]['prices']['Menudeo'];
+      } else if (counter < 30) {
+        int index = carrito.indexWhere((element) =>
+            element.containsValue(name) && element.containsValue(molde));
+        carrito[index]['prices'][clientes[drop1]]['Mayoreo'] != null
+            ? carrito[index]['price'] =
+                carrito[index]['prices'][clientes[drop1]]['Mayoreo']
+            : carrito[index]['price'] = carrito[index]['prices']['Mayoreo'];
+      }
+    }
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Row(
       children: [
         Container(
-          child:
-              Image(height: height * .05, image: NetworkImage(widget.imagen)),
+          child: Image(height: height * .05, image: NetworkImage(imagen)),
         ),
-        Container(
-            width: width * .3, child: Text(widget.molde + ' ' + widget.name)),
+        Container(width: width * .3, child: Text(molde + ' ' + name)),
         Container(
           child: botoncitos(
-            context: context,
-            initNumber: counter,
-            minNumber: 1,
-            maxNumber: widget.max,
-            add: () => change(true),
-            rest: () => change(false),
-          ),
+              context: context,
+              initNumber: counter,
+              minNumber: 1,
+              maxNumber: max,
+              molde: molde,
+              name: name),
         ),
         Container(
             width: width * .18,
             margin: EdgeInsets.only(left: height * .01),
-            child: Text(' \$ ${widget.price} c/u')),
+            child: Text(' \$ $price c/u')),
         Spacer(),
         IconButton(
             onPressed: () {
-              widget.delete();
+              delete();
             },
             icon: Icon(
               Icons.delete_outlined,
@@ -304,43 +395,13 @@ class __CardOrdenState extends State<_CardOrden> {
     );
   }
 
-  change(bool choice) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List carrito = json.decode(prefs.getString('carrito'));
-    int index = carrito.indexWhere((element) =>
-        element.containsValue(widget.name) &&
-        element.containsValue(widget.molde));
-    carrito = json.decode(prefs.getString('carrito'));
-    print(carrito[index]['max']);
-    if (choice) {
-      if (carrito[index]['max'] > counter)
-        setState(() {
-          carrito[index]['count']++;
-          counter++;
-          widget.state();
-        });
-    }
-
-    if (!choice) {
-      if (counter > 1)
-        setState(() {
-          carrito[index]['count']--;
-          counter--;
-          widget.state();
-        });
-    }
-
-    var carEncode = json.encode(carrito);
-    prefs.setString('carrito', carEncode);
-  }
-
   Widget botoncitos(
       {@required int maxNumber,
       @required int minNumber,
       @required int initNumber,
       @required BuildContext context,
-      @required Function add,
-      @required Function rest}) {
+      @required String name,
+      @required String molde}) {
     var _currentCount = initNumber;
     return Container(
       margin: EdgeInsets.only(left: 10),
@@ -356,7 +417,13 @@ class __CardOrdenState extends State<_CardOrden> {
         children: [
           InkWell(
             onTap: () {
-              rest();
+              setState(() {
+                int index = carrito.indexWhere((element) =>
+                    element.containsValue(name) &&
+                    element.containsValue(molde));
+                carrito[index]['count']--;
+                initNumber--;
+              });
             },
             child: Container(
                 alignment: Alignment.center,
@@ -371,7 +438,13 @@ class __CardOrdenState extends State<_CardOrden> {
           Text(_currentCount.toString()),
           InkWell(
             onTap: () {
-              add();
+              setState(() {
+                int index = carrito.indexWhere((element) =>
+                    element.containsValue(name) &&
+                    element.containsValue(molde));
+                carrito[index]['count']++;
+                initNumber++;
+              });
             },
             child: Container(
                 alignment: Alignment.center,
