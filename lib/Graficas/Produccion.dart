@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
@@ -45,7 +43,6 @@ class _ProduccionState extends State<Produccion> {
     getInventario().then((body) {
       produccion = filteredProduccion = body;
 
-
       setState(() {});
     });
 
@@ -61,22 +58,20 @@ class _ProduccionState extends State<Produccion> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-           Padding(
-      padding: EdgeInsets.only(right: 20.0),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ProduccionTotal()),
-                                    );
-        },
-        child: Icon(
-          Icons.inventory,
-          size: 26.0,
-        ),
-      )
-    ),
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProduccionTotal()),
+                  );
+                },
+                child: Icon(
+                  Icons.inventory,
+                  size: 26.0,
+                ),
+              )),
         ],
         backgroundColor: colorPrincipal,
         elevation: 5,
