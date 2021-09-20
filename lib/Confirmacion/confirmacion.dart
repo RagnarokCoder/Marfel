@@ -2,14 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:icon_badge/icon_badge.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
+import 'package:paleteria_marfel/main.dart';
 
-class Confirmacion extends StatelessWidget {
+class Confirmacion extends StatefulWidget {
   final usuario;
   const Confirmacion({
     Key key,
     @required this.usuario,
   }) : super(key: key);
 
+  @override
+  _ConfirmacionState createState() => _ConfirmacionState();
+}
+
+List<bool> porConfirmar = [];
+
+class _ConfirmacionState extends State<Confirmacion> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,16 +27,17 @@ class Confirmacion extends StatelessWidget {
             backgroundColor: colorPrincipal,
             actions: []),
         drawer: CustomAppBar(
-          usuario: usuario,
+          usuario: widget.usuario,
         ),
-        body: Column(
+        body: Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * .75,
+              height: double.infinity,
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection("Ventas")
                     .where("Pendiente", isEqualTo: false)
+                    .orderBy("Cliente")
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -42,15 +51,15 @@ class Confirmacion extends StatelessWidget {
                     itemCount: length,
                     itemBuilder: (BuildContext context, int index) {
                       var doc = docs[index].data();
+                      if (porConfirmar.length <= index) {
+                        porConfirmar.add(false);
+                      }
 
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Container(
-                              height: MediaQuery.of(context).size.height * .05,
-                              child: Text(doc["Pendiente"].toString())),
-                          Divider()
+                          confirm(context, doc, index),
                         ],
                       );
                     },
@@ -60,9 +69,11 @@ class Confirmacion extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.all(10),
-              alignment: Alignment.centerRight,
+              alignment: Alignment.bottomRight,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {});
+                },
                 child: Icon(Icons.align_horizontal_left),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(CircleBorder()),
@@ -79,5 +90,53 @@ class Confirmacion extends StatelessWidget {
             )
           ],
         ));
+  }
+
+  Widget confirm(BuildContext context, Map<String, dynamic> doc, int index) {
+    bool isSwitched = porConfirmar[index];
+    return Container(
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: colorPrincipal,
+      ),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * .1,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Cliente: " + doc["Cliente"]["Nombre"].toString()),
+              Container(child: Text(" " + doc["Pendiente"].toString())),
+              Switch(
+                value: isSwitched,
+                onChanged: (value) {
+                  setState(() {
+                    isSwitched = value;
+                    porConfirmar[index] = value;
+                  });
+
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    setState(() {});
+                  });
+                },
+                activeTrackColor: Colors.lightGreenAccent,
+                activeColor: Colors.green,
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(doc["FechaVenta"].toString()),
+              Text("    Total: \$" + doc["Total"].toString())
+            ],
+          )
+        ],
+      ),
+    );
   }
 }
