@@ -101,29 +101,35 @@ class _ConfirmacionState extends State<Confirmacion> {
         color: colorPrincipal,
       ),
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * .1,
+      height: MediaQuery.of(context).size.height * .12,
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("Cliente: " + doc["Cliente"]["Nombre"].toString()),
-              Container(child: Text(" " + doc["Pendiente"].toString())),
-              Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                    porConfirmar[index] = value;
-                  });
+              Column(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text("¿Confirma credito?")),
+                  Switch(
+                    value: isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        isSwitched = value;
+                        porConfirmar[index] = value;
+                      });
 
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    setState(() {});
-                  });
-                },
-                activeTrackColor: Colors.lightGreenAccent,
-                activeColor: Colors.green,
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        setState(() {});
+                      });
+                    },
+                    activeTrackColor: Colors.lightGreenAccent,
+                    activeColor: Colors.green,
+                  ),
+                ],
               ),
             ],
           ),
