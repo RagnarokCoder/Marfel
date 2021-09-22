@@ -37,11 +37,16 @@ class VentaWidget extends StatefulWidget {
               .fold(0.0, (a, b) => a + b);
         }),
         categories = documents.fold({}, (Map<String, double> map, document) {
-          if (!map.containsKey(document.data()['Nombre'])) {
-            map["document.data()['Nombre']"] = 0.0;
+          List<dynamic> productos = document.data()["Productos"];
+
+          for (var i in productos) {
+            if (!map.containsKey(i["Molde"] + " " + i["NombreProducto"])) {
+              map[i["Molde"] + " " + i["NombreProducto"]] = 0.0;
+            }
+            map[i["Molde"] + " " + i["NombreProducto"]] += i["Subtotal"];
+            print(i);
           }
 
-          map["document.data()['Nombre']"] += document.data()['Total'];
           i++;
           return map;
         }),
