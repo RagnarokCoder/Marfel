@@ -6,6 +6,7 @@ import 'package:paleteria_marfel/Compras/VistaComprasList.dart';
 import 'package:paleteria_marfel/FirebaseAuth/Authentication_Service.dart';
 import 'package:paleteria_marfel/Gastos/VistaGastos.dart';
 import 'package:paleteria_marfel/Graficas/VistaGraficas2.dart';
+import 'package:paleteria_marfel/Help/Soporte.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:paleteria_marfel/Inventario/VistaInventario.dart';
 import 'package:paleteria_marfel/InventarioStock/InventarioMp.dart';
@@ -81,14 +82,40 @@ class _CustomAppBarState extends State<CustomAppBar> {
         child: ListView(
       
       children: <Widget>[
+        
         Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.38,
+          height: MediaQuery.of(context).size.height * 0.45,
           padding: EdgeInsets.only(left: 5, right: 5),
           color: colorPrincipal,
           child: Column(
+            
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Ayuda",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                  IconButton(
+                            onPressed: (){
+                              Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: Soporte(
+                                  usuario: widget.usuario,
+                                )));
+                            },
+                            icon: Icon(FontAwesomeIcons.headset, color: Colors.white, size: 20),
+                          ),
+                ],
+              ),
               Container(
                   width: MediaQuery.of(context).size.width * 0.65,
                   height: MediaQuery.of(context).size.height * 0.30,
@@ -102,12 +129,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   )),
             Container(
               color: colorPrincipal,
-                        width: MediaQuery.of(context).size.width * 0.35,
+                        width: MediaQuery.of(context).size.width * 0.8,
                         height: MediaQuery.of(context).size.height * 0.08,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("${widget.usuario}",
+                           Text("${widget.usuario}",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15,
