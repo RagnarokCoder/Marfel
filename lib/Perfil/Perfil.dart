@@ -111,15 +111,22 @@ class _PerfilState extends State<Perfil> {
   }
 
   Future<dynamic> showAlert() {
+    String auxString = "";
     return showDialog(
         context: context,
         barrierDismissible: true,
         builder: (context) {
           return AlertDialog(
-            title: Text('Compra'),
+            title: Text('Cambiar contraseña'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[],
+              children: <Widget>[
+                TextField(
+                  onChanged: (input) {
+                    auxString = input;
+                  },
+                )
+              ],
             ),
             actions: [
               TextButton(

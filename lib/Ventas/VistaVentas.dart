@@ -123,6 +123,14 @@ class _VistaVentasState extends State<VistaVentas> {
                         function: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => SalesProducts(
+                                    state: () {
+                                      setState(() {});
+                                      Future.delayed(
+                                          const Duration(milliseconds: 500),
+                                          () {
+                                        setState(() {});
+                                      });
+                                    },
                                     categoria: doc.data()['nombre'],
                                     usuario: widget.usuario,
                                   )));
