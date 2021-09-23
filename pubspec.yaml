@@ -48,6 +48,8 @@ dependencies:
   marquee_widget:
   slide_to_confirm:
   shared_preferences:
+  firebase_storage:
+  flutter_spinkit:
 
 
   expansion_card: ^0.1.0

@@ -4,6 +4,7 @@ import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
@@ -146,7 +147,11 @@ class _VistaGastosState extends State<VistaGastos> {
           Center(
             child: Column(
               children: [
-                Image.asset("assets/marfelLoad.gif"),
+                SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                    
                 Text("Seleccione Una Fecha...",
                 style: TextStyle(
                   color: Colors.black,

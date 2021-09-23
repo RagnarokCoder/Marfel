@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 import 'package:intl/intl.dart';
@@ -52,15 +53,12 @@ class _AgregarCompraState extends State<AgregarCompra> {
             stream: FirebaseFirestore.instance.collection('ProductosCompras').snapshots(),
             builder: (context, snapshot) {
              if(!snapshot.hasData){
-                return Container(
-                  height: 50,
-                  width: 50,
-                  child: SizedBox(height: 50, width: 50,
-                  child: Center(
-                    child: Image.asset("assets/marfelLoad.gif")
-                  ),
-                ),
-                );
+                return Center(
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                    );
               }
               int length = snapshot.data.docs.length;
               return Container(

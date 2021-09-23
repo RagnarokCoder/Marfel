@@ -12,7 +12,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  SystemChrome.setEnabledSystemUIOverlays([]);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.transparent
+ ));
   runApp(MyApp());
 }
 

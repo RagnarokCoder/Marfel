@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:paleteria_marfel/Inventario/NotificacionesInventario.dart';
 import 'package:yudiz_modal_sheet/yudiz_modal_sheet.dart';
 import 'package:icon_badge/icon_badge.dart';
@@ -7,7 +8,8 @@ import 'VistaInventario.dart';
 
 class DetallesInventario extends StatefulWidget {
   final String categoria;
-  DetallesInventario({Key key, this.categoria}) : super(key: key);
+  final String usuario;
+  DetallesInventario({Key key, this.categoria, this.usuario}) : super(key: key);
 
   @override
   _DetallesInventarioState createState() => _DetallesInventarioState();
@@ -15,6 +17,7 @@ class DetallesInventario extends StatefulWidget {
 
 final _condicionesText = TextEditingController();
 int documents = 0;
+bool borrarItem = false;
 
 class _DetallesInventarioState extends State<DetallesInventario> {
   @override
@@ -38,6 +41,7 @@ class _DetallesInventarioState extends State<DetallesInventario> {
         });
       });
     });
+    print(widget.categoria);
   }
 
   @override
@@ -79,11 +83,16 @@ class _DetallesInventarioState extends State<DetallesInventario> {
             child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection("Inventario")
-                    .where("Categoria", isEqualTo: widget.categoria)
+                    .where("Molde", isEqualTo: widget.categoria)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Text("Cargando Productos...");
+                    return Center(
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                    );
                   }
                   int length = snapshot.data.docs.length;
 
@@ -128,7 +137,7 @@ class _DetallesInventarioState extends State<DetallesInventario> {
                                 ),
                                 Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.2,
+                                      MediaQuery.of(context).size.height * 0.15,
                                   child:
                                       Image.network("${doc.data()['Imagen']}"),
                                 ),
@@ -149,7 +158,7 @@ class _DetallesInventarioState extends State<DetallesInventario> {
                                         color: colorPrincipal,
                                       ),
                                       onPressed: () {
-                                        limitarProducto(context, doc);
+                                        detallesProducto(context, doc);
                                       },
                                     )
                                   ],
@@ -164,6 +173,129 @@ class _DetallesInventarioState extends State<DetallesInventario> {
         ],
       ),
     );
+  }
+
+  detallesProducto(BuildContext context, DocumentSnapshot doc) {
+    YudizModalSheet.show(
+        context: context,
+        child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50))),
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text("Detalles Del Producto",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold
+                ),
+                ),
+                Container(
+                    margin: EdgeInsets.only(left: 10, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        borrarItem == false
+                            ? RaisedButton.icon(
+                                elevation: 5,
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side:
+                                        BorderSide(color: Colors.transparent)),
+                                icon: Icon(Icons.delete,
+                                    color: Colors.red.shade700, size: 22),
+                                label: Text("Borrar Producto"),
+                                onPressed: () {
+                                  setState(() {});
+                                  borrarItem = true;
+                                },
+                              )
+                            : Column(
+                                children: [
+                                  Text(
+                                    "Confirmar",
+                                    style: TextStyle(
+                                        color: colorPrincipal,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      RaisedButton.icon(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                          ),
+                                          color: Colors.white,
+                                          elevation: 5,
+                                          onPressed: () {
+                                            setState(() {});
+                                            borrarItem = false;
+                                            FirebaseFirestore.instance.collection("Inventario").doc(doc.id).delete();
+                                          },
+                                          icon: Icon(Icons.check,
+                                              color: Colors.green.shade600),
+                                          label: Text(
+                                            "Si",
+                                            style: TextStyle(
+                                                color: colorPrincipal),
+                                          )),
+                                      RaisedButton.icon(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15.0),
+                                          ),
+                                          color: Colors.white,
+                                          elevation: 5,
+                                          onPressed: () {
+                                            setState(() {});
+                                            borrarItem = false;
+                                          },
+                                          icon: Icon(Icons.close,
+                                              color: Colors.red.shade600),
+                                          label: Text(
+                                            "No",
+                                            style: TextStyle(
+                                                color: colorPrincipal),
+                                          ))
+                                    ],
+                                  )
+                                ],
+                              ),
+                              SizedBox(width: 15,),
+                              RaisedButton.icon(
+                                elevation: 5,
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side:
+                                        BorderSide(color: Colors.transparent)),
+                                icon: Icon(Icons.touch_app,
+                                    color: Colors.blue.shade700, size: 22),
+                                label: Text("Limitar Producto"),
+                                onPressed: () {
+                                  limitarProducto(context, doc);
+                                },
+                              )
+                      ],
+                    ),
+                  )
+              ],
+            )),
+          );
+        }),
+        direction: YudizModalSheetDirection.BOTTOM);
   }
 
   limitarProducto(BuildContext context, DocumentSnapshot doc) {
