@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:icon_badge/icon_badge.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:paleteria_marfel/Ventas/Carrito.dart';
@@ -35,8 +36,6 @@ class _VistaVentasState extends State<VistaVentas> {
   @override
   Widget build(BuildContext context) {
     getCarr();
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(
             backgroundColor: colorPrincipal,
@@ -98,8 +97,11 @@ class _VistaVentasState extends State<VistaVentas> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
-                    child: Image.asset("assets/marfelLoad.gif"),
-                  );
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                    );
                 }
                 int length = snapshot.data.docs.length;
                 return GridView.builder(

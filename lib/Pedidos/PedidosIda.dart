@@ -4,6 +4,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:icon_badge/icon_badge.dart';
 import 'package:intl/intl.dart';
@@ -131,7 +132,11 @@ class _PedidosIdaState extends State<PedidosIda> {
                   fontSize: 16
                 ),
                 ),
-                Image.asset("assets/marfelLoad.gif")
+                SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                  
               ],
             ):
           Container(
@@ -624,7 +629,11 @@ class _PedidosIdaState extends State<PedidosIda> {
                   fontSize: 14
                 ),
                 ),
-                Image.asset("assets/marfelLoad.gif")
+                 SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                
               ],
             );
               }

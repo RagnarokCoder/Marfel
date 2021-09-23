@@ -139,8 +139,9 @@ class _OrdenState extends State<Orden> {
                           width: width * .3,
                           child: SwitchListTile(
                               title: Container(
-                                  child: FittedBox(
-                                      fit: BoxFit.fill, child: Text('N/S'))),
+                                  child: Text('N/S',
+                                      style: TextStyle(fontSize: 14),
+                                      )),
                               value: pendiente,
                               onChanged: (data) {
                                 setState(() => pendiente = data);

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -322,7 +323,12 @@ class LineChartSample1State extends State<LineChartSample1> {
                         ? Container(
                             height: MediaQuery.of(context).size.height * 0.3,
                             margin: EdgeInsets.only(left: 10, right: 10),
-                            child: Image.asset("assets/marfelLoad.gif"),
+                            child: Center(
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                    )
                           )
                         : Card(
                             margin: EdgeInsets.only(left: 10, right: 10),
@@ -851,7 +857,7 @@ class LineChartSample1State extends State<LineChartSample1> {
         touchTooltipData: LineTouchTooltipData(
           tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
         ),
-        touchCallback: (FlTouchEvent a, LineTouchResponse touchResponse) {},
+        touchCallback: (LineTouchResponse touchResponse) {},
         handleBuiltInTouches: true,
       ),
       gridData: FlGridData(
@@ -861,7 +867,7 @@ class LineChartSample1State extends State<LineChartSample1> {
         bottomTitles: SideTitles(
           showTitles: true,
           reservedSize: 8,
-          getTextStyles: (context, value) => const TextStyle(
+          getTextStyles: ( value) => const TextStyle(
             color: Color(0xff75729e),
             fontWeight: FontWeight.bold,
             fontSize: 14,
@@ -899,7 +905,7 @@ class LineChartSample1State extends State<LineChartSample1> {
         ),
         leftTitles: SideTitles(
           showTitles: true,
-          getTextStyles: (context, value) => const TextStyle(
+          getTextStyles: (value) => const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 9,
@@ -1056,7 +1062,7 @@ class LineChartSample1State extends State<LineChartSample1> {
         bottomTitles: SideTitles(
           showTitles: true,
           reservedSize: 22,
-          getTextStyles: (context, value) => const TextStyle(
+          getTextStyles: ( value) => const TextStyle(
             color: Color(0xff75729e),
             fontWeight: FontWeight.bold,
             fontSize: 14,
@@ -1076,7 +1082,7 @@ class LineChartSample1State extends State<LineChartSample1> {
         ),
         leftTitles: SideTitles(
           showTitles: true,
-          getTextStyles: (context, value) => const TextStyle(
+          getTextStyles: ( value) => const TextStyle(
             color: Color(0xff75729e),
             fontWeight: FontWeight.bold,
             fontSize: 14,

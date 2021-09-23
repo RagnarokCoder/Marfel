@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:icon_badge/icon_badge.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
 import 'package:paleteria_marfel/Ventas/Carrito.dart';
@@ -13,11 +14,13 @@ List carrito = [];
 Map<String, dynamic> precios = {};
 
 class SalesProducts extends StatefulWidget {
+
   final Function state;
+  final bool inventario;
   final String categoria;
   final String usuario;
-  const SalesProducts(
-      {Key key, @required this.categoria, this.usuario, this.state})
+  const SalesProducts({Key key, @required this.categoria, this.usuario, this.inventario, this.state})
+
       : super(key: key);
 
   @override
@@ -50,6 +53,8 @@ class _SalesProductsState extends State<SalesProducts> {
           actions: [
             Stack(
               children: <Widget>[
+                widget.inventario == true?
+                SizedBox():
                 IconBadge(
                   icon: Icon(
                     Icons.shopping_cart,
@@ -85,7 +90,10 @@ class _SalesProductsState extends State<SalesProducts> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
-                      child: Image.asset("assets/marfelLoad.gif"),
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
                     );
                   }
                   int length = snapshot.data.docs.length;
@@ -109,6 +117,7 @@ class _SalesProductsState extends State<SalesProducts> {
                           img: doc.data()['Imagen'],
                           molde: doc.data()['Molde'],
                           vendidos: doc.data()['Vendidos'],
+
                           state: () {
                             setState(() {});
                             Future.delayed(const Duration(milliseconds: 500),
@@ -116,6 +125,9 @@ class _SalesProductsState extends State<SalesProducts> {
                               setState(() {});
                             });
                           },
+
+                          inventario: widget.inventario,
+
                           id: doc.id,
                         );
                       }
@@ -125,8 +137,10 @@ class _SalesProductsState extends State<SalesProducts> {
                           molde: doc.data()['Molde'],
                           vendidos: doc.data()['Vendidos'],
                           id: doc.id,
-                          img:
-                              'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg');
+
+                          inventario: widget.inventario,
+                          img:'http://atrilco.com/wp-content/uploads/2017/11/ef3-placeholder-image.jpg'
+                              );
                     },
                   );
                 }),
@@ -237,7 +251,11 @@ class CardMolde extends StatelessWidget {
   final String molde;
   final dynamic max;
   final String id;
+
   final Function state;
+
+  final bool inventario;
+
   const CardMolde(
       {Key key,
       @required this.title,
@@ -245,8 +263,10 @@ class CardMolde extends StatelessWidget {
       this.molde,
       @required this.max,
       this.id,
+
       this.vendidos,
-      this.state})
+      this.state, this.inventario})
+
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -270,7 +290,7 @@ class CardMolde extends StatelessWidget {
               children: [
                 Container(
                     margin: EdgeInsets.only(right: 10),
-                    child: IconButton(
+                    child:  inventario == true?SizedBox():IconButton(
                       icon: Icon(
                         Icons.add,
                         color: colorPrincipal,
