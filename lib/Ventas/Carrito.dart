@@ -114,7 +114,7 @@ class _OrdenState extends State<Orden> {
                   });
                 },
                 context: context,
-                min: 1,
+                min: 0,
                 max: carrito[index]['max'].round(),
                 counter: carrito[index]['count'],
                 name: carrito[index]['nombre'],
@@ -139,9 +139,10 @@ class _OrdenState extends State<Orden> {
                           width: width * .3,
                           child: SwitchListTile(
                               title: Container(
-                                  child: Text('N/S',
-                                      style: TextStyle(fontSize: 14),
-                                      )),
+                                  child: Text(
+                                'N/S',
+                                style: TextStyle(fontSize: 14),
+                              )),
                               value: pendiente,
                               onChanged: (data) {
                                 setState(() => pendiente = data);

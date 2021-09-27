@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Perfil extends StatefulWidget {
   final String usuario;
@@ -110,8 +111,9 @@ class _PerfilState extends State<Perfil> {
     );
   }
 
+  String contra = "";
+
   Future<dynamic> showAlert() {
-    String auxString = "";
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -122,8 +124,11 @@ class _PerfilState extends State<Perfil> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 TextField(
+                  keyboardType: TextInputType.number,
+                  maxLines: 1,
+                  maxLength: 4,
                   onChanged: (input) {
-                    auxString = input;
+                    contra = input;
                   },
                 )
               ],
@@ -132,6 +137,7 @@ class _PerfilState extends State<Perfil> {
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    av();
                   },
                   child: Text('si')),
               TextButton(
@@ -140,5 +146,10 @@ class _PerfilState extends State<Perfil> {
             ],
           );
         });
+  }
+
+  Future<void> av() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('codigo', int.parse(contra));
   }
 }
