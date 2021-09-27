@@ -1,12 +1,10 @@
-
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:paleteria_marfel/HexaColors/HexColor.dart';
 import 'package:paleteria_marfel/Menu/PantallaInicio.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LockScreen extends StatefulWidget {
   final String usuario;
@@ -15,65 +13,61 @@ class LockScreen extends StatefulWidget {
   @override
   _LockScreenState createState() => _LockScreenState();
 }
- int value = 0;
- Color colorPrincipal = HexColor("#3C9CA8");
- bool badPassword = false;
- int intentos = 0;
 
- Timer _timer;
+int value = 0;
+Color colorPrincipal = HexColor("#3C9CA8");
+bool badPassword = false;
+int intentos = 0;
+
+Timer _timer;
 int _start = 60;
 
 class _LockScreenState extends State<LockScreen> {
-
   void startTimer() {
-  const oneSec = const Duration(seconds: 1);
-  _timer = new Timer.periodic(
-    oneSec,
-    (Timer timer) {
-      if (_start == 0) {
-        setState(() {
-          timer.cancel();
-          intentos = 0;
-          _start = 60 * 2;
-        });
-      } else {
-        setState(() {
-          _start--;
-        });
-      }
-    },
-  );
-}
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+            intentos = 0;
+            _start = 60 * 2;
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
 
-@override
-void dispose() {
-  _timer.cancel();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-       backgroundColor: colorPrincipal,
-       body: Container(
-         child: Column(
-           children: [
-             Container(
-               height: size.height*0.3,
-               child: Image.asset("assets/marfelLogoProtbl.png"),
-             ),
-             badPassword == false ?
-             _currentValue():_errorContra(),
-             intentos == 3?
-             timer():
-             _numpad()
-           ],
-         ),
-       ),
+      backgroundColor: colorPrincipal,
+      body: Container(
+        child: Column(
+          children: [
+            Container(
+              height: size.height * 0.3,
+              child: Image.asset("assets/marfelLogoProtbl.png"),
+            ),
+            badPassword == false ? _currentValue() : _errorContra(),
+            intentos == 3 ? timer() : _numpad()
+          ],
+        ),
+      ),
     );
   }
-
 
   Widget _numpad() {
     return Expanded(
@@ -113,7 +107,7 @@ void dispose() {
                     ),
                   ),
                 ),
-                onTap: (){
+                onTap: () {
                   setState(() {
                     value = 0;
                   });
@@ -121,7 +115,7 @@ void dispose() {
               ),
               _num("0", height),
               GestureDetector(
-                  child: Container(
+                child: Container(
                   height: height,
                   child: Center(
                     child: Icon(
@@ -131,65 +125,57 @@ void dispose() {
                     ),
                   ),
                 ),
-                onTap: (){
-                  if(value == 5361)
-                    {
-                      Navigator.push(
-                            context,
-                            PageTransition(
-                                type: PageTransitionType.leftToRight,
-                                child: PantallaInicio(
-                                  usuario: widget.usuario,
-                                )));
-                    }
-                    else
-                    {
+                onTap: () {
+                  if (value == getContra()) {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.leftToRight,
+                            child: PantallaInicio(
+                              usuario: widget.usuario,
+                            )));
+                  } else {
+                    setState(() {
+                      badPassword = true;
+                      value = 0;
+                      intentos += 1;
+                      if (intentos == 3) {
+                        startTimer();
+                      }
+                    });
+                    Future.delayed(const Duration(milliseconds: 2000), () {
                       setState(() {
-                        badPassword = true;
-                        value = 0;
-                        intentos += 1;
-                        if(intentos == 3)
-                        {
-                          startTimer();
-                          
-                        }
+                        badPassword = false;
                       });
-                      Future.delayed(const Duration(milliseconds: 2000), () {
-                setState(() {
-                  badPassword = false;
-                });
-                });
-                    }
+                    });
+                  }
                 },
-                ),
+              ),
             ]),
           ],
         );
       }),
     );
   }
+
   Widget _num(String text, double height) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        if(badPassword==true)
-        {
+        if (badPassword == true) {
           setState(() {
             value = 0;
           });
-        }
-        else
-        {
+        } else {
           setState(() {
-          if (text == ",") {
-            value = value * 100;
-          } else {
-            value = value * 10 + int.parse(text);
-          }
-          print(value);
-        });
+            if (text == ",") {
+              value = value * 100;
+            } else {
+              value = value * 10 + int.parse(text);
+            }
+            print(value);
+          });
         }
-        
       },
       child: Container(
         height: height,
@@ -208,47 +194,45 @@ void dispose() {
 
   Widget _currentValue() {
     return Text(
-        value == 0 ? "":
-        "${value.toString().replaceAll(RegExp(r"."), " * ")}",
-        style: TextStyle(
-          
-          fontSize: 15,
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
-      );
-  }
-
-  Widget _errorContra()
-  {
-    return Opacity(
-      opacity: .9,
-      child:
-      Container(
-      height: MediaQuery.of(context).size.height*0.08,
-      width: MediaQuery.of(context).size.width*0.8,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.red.shade700,
+      value == 0 ? "" : "${value.toString().replaceAll(RegExp(r"."), " * ")}",
+      style: TextStyle(
+        fontSize: 15,
+        color: Colors.white,
+        fontWeight: FontWeight.w500,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Icon(Icons.error, color: Colors.white,),
-          Text("Contraseña Incorrecta!",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.bold
-          ),
-          )
-        ],
-      ),
-    )
     );
   }
 
-  Widget timer(){
+  Widget _errorContra() {
+    return Opacity(
+        opacity: .9,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.08,
+          width: MediaQuery.of(context).size.width * 0.8,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: Colors.red.shade700,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                Icons.error,
+                color: Colors.white,
+              ),
+              Text(
+                "Contraseña Incorrecta!",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+        ));
+  }
+
+  Widget timer() {
     return Expanded(
       child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -258,22 +242,26 @@ void dispose() {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Icon(Icons.error, color: Colors.white,),
-                  Text("Numero De Intentos Excedido!\nVuelva A Intentar En: ",
-                  style: TextStyle(
+                  Icon(
+                    Icons.error,
                     color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold
                   ),
+                  Text(
+                    "Numero De Intentos Excedido!\nVuelva A Intentar En: ",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
                   )
                 ],
               ),
-              Text("$_start",
-              style: TextStyle(
+              Text(
+                "$_start",
+                style: TextStyle(
                     color: Colors.white,
                     fontSize: 32,
-                    fontWeight: FontWeight.bold
-                  ),)
+                    fontWeight: FontWeight.bold),
+              )
             ],
           ),
         );
@@ -281,4 +269,10 @@ void dispose() {
     );
   }
 
+  Future<Object> getContra() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int contra = prefs.getInt('contra');
+    contra == null ? contra = 5361 : contra = contra;
+    return contra;
+  }
 }
