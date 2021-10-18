@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:paleteria_marfel/Compras/AgregarCompra.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
@@ -230,8 +231,11 @@ bool isSearching = false;
                               
                             })
                         : Center(
-                            child: Image.asset("assets/marfelLoad.gif"),
-                          ),
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                    )
                   ),
                   
                ],

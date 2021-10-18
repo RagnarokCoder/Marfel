@@ -14,7 +14,7 @@ class Orden extends StatefulWidget {
   _OrdenState createState() => _OrdenState();
 }
 
-double total;
+dynamic total;
 
 class _OrdenState extends State<Orden> {
   _OrdenState();
@@ -114,8 +114,8 @@ class _OrdenState extends State<Orden> {
                   });
                 },
                 context: context,
-                min: 1,
-                max: carrito[index]['max'],
+                min: 0,
+                max: carrito[index]['max'].round(),
                 counter: carrito[index]['count'],
                 name: carrito[index]['nombre'],
                 molde: carrito[index]['molde'],
@@ -130,7 +130,7 @@ class _OrdenState extends State<Orden> {
           margin: EdgeInsets.all(10),
           child: Row(
             children: [
-              (drop1 != 0 && drop1 != (clientes.length - 1))
+              (drop1 != 0 && drop1 != (clientes.length))
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -139,8 +139,10 @@ class _OrdenState extends State<Orden> {
                           width: width * .3,
                           child: SwitchListTile(
                               title: Container(
-                                  child: FittedBox(
-                                      fit: BoxFit.fill, child: Text('N/S'))),
+                                  child: Text(
+                                'N/S',
+                                style: TextStyle(fontSize: 14),
+                              )),
                               value: pendiente,
                               onChanged: (data) {
                                 setState(() => pendiente = data);
@@ -162,41 +164,23 @@ class _OrdenState extends State<Orden> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Spacer(),
-              drop1 == (clientes.length - 1)
-                  ? InkWell(
-                      onTap: () {
-                        _mostrarAlert(context);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(right: width * .04),
-                        height: 40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: colorButton),
-                        child: Text(
-                          ' Crear Paquete ',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    )
-                  : InkWell(
-                      onTap: () {
-                        _mostrarAlert(context);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(right: width * .04),
-                        height: 40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: colorButton),
-                        child: Text(
-                          ' Pagar ',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ),
+              InkWell(
+                onTap: () {
+                  _mostrarAlert(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(right: width * .04),
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: colorButton),
+                  child: Text(
+                    ' Pagar ',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
             ],
           ),
         )
@@ -348,17 +332,22 @@ class _OrdenState extends State<Orden> {
       if (counter >= 30) {
         int index = carrito.indexWhere((element) =>
             element.containsValue(name) && element.containsValue(molde));
-        carrito[index]['prices'][clientes[drop1]]['Menudeo'] != null
-            ? carrito[index]['price'] =
-                carrito[index]['prices'][clientes[drop1]]['Menudeo']
-            : carrito[index]['price'] = carrito[index]['prices']['Menudeo'];
+        if (carrito[index]['prices'][clientes[drop1]]['Mayoreo'] != null) {
+          carrito[index]['price'] =
+              carrito[index]['prices'][clientes[drop1]]['Mayoreo'];
+        } else {
+          carrito[index]['price'] = carrito[index]['prices']['Mayoreo'];
+        }
       } else if (counter < 30) {
         int index = carrito.indexWhere((element) =>
             element.containsValue(name) && element.containsValue(molde));
-        carrito[index]['prices'][clientes[drop1]]['Mayoreo'] != null
-            ? carrito[index]['price'] =
-                carrito[index]['prices'][clientes[drop1]]['Mayoreo']
-            : carrito[index]['price'] = carrito[index]['prices']['Mayoreo'];
+        print(carrito[index]['prices'][clientes[drop1]] != null);
+        if (carrito[index]['prices'][clientes[drop1]] != null) {
+          carrito[index]['price'] =
+              carrito[index]['prices'][clientes[drop1]]['Menudeo'];
+        } else {
+          carrito[index]['price'] = carrito[index]['prices']['Menudeo'];
+        }
       }
     }
     final height = MediaQuery.of(context).size.height;

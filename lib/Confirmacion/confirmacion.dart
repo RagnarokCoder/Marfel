@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:icon_badge/icon_badge.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:paleteria_marfel/CustomWidgets/CustomAppbar.dart';
-import 'package:paleteria_marfel/main.dart';
 
 class Confirmacion extends StatefulWidget {
   final usuario;
@@ -42,7 +41,10 @@ class _ConfirmacionState extends State<Confirmacion> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
-                      child: Image.asset("assets/marfelLoad.gif"),
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
                     );
                   }
                   int length = snapshot.data.docs.length;
@@ -74,13 +76,14 @@ class _ConfirmacionState extends State<Confirmacion> {
                 onPressed: () {
                   setState(() {});
                 },
-                child: Icon(Icons.align_horizontal_left),
+                child: Icon(Icons.format_align_left_outlined),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(CircleBorder()),
                   padding: MaterialStateProperty.all(EdgeInsets.all(20)),
                   backgroundColor: MaterialStateProperty.all(
                       Colors.green), // <-- Button color
                   overlayColor:
+                      // ignore: missing_return
                       MaterialStateProperty.resolveWith<Color>((states) {
                     if (states.contains(MaterialState.pressed))
                       return Colors.greenAccent; // <-- Splash color
@@ -101,29 +104,35 @@ class _ConfirmacionState extends State<Confirmacion> {
         color: colorPrincipal,
       ),
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * .1,
+      height: MediaQuery.of(context).size.height * .12,
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("Cliente: " + doc["Cliente"]["Nombre"].toString()),
-              Container(child: Text(" " + doc["Pendiente"].toString())),
-              Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                    porConfirmar[index] = value;
-                  });
+              Column(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text("¿Confirma credito?")),
+                  Switch(
+                    value: isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        isSwitched = value;
+                        porConfirmar[index] = value;
+                      });
 
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    setState(() {});
-                  });
-                },
-                activeTrackColor: Colors.lightGreenAccent,
-                activeColor: Colors.green,
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        setState(() {});
+                      });
+                    },
+                    activeTrackColor: Colors.lightGreenAccent,
+                    activeColor: Colors.green,
+                  ),
+                ],
               ),
             ],
           ),

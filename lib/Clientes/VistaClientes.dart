@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
@@ -319,8 +320,11 @@ List filteredClientes = [];
                                   ));
                             })
                         : Center(
-                            child: Image.asset("assets/marfelLoad.gif"),
-                          ),
+                      child: SpinKitFadingCube(
+                    color: colorPrincipal,
+                    size: 50.0,
+                      ),
+                    )
                   ),
                
               ],

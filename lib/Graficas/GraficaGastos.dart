@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_dropdown/custom_dropdown.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:marquee_widget/marquee_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -322,8 +323,12 @@ class LineChartSample1State extends State<LineChartSample1> {
                         ? Container(
                             height: MediaQuery.of(context).size.height * 0.3,
                             margin: EdgeInsets.only(left: 10, right: 10),
-                            child: Image.asset("assets/marfelLoad.gif"),
-                          )
+                            child: Center(
+                              child: SpinKitFadingCube(
+                                color: colorPrincipal,
+                                size: 50.0,
+                              ),
+                            ))
                         : Card(
                             margin: EdgeInsets.only(left: 10, right: 10),
                             color: colorPrincipal,
